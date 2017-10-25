@@ -5,15 +5,17 @@
 #include <iostream>
 
 #include "accumulator.h"
-#include "constants.h"
 #include "memory.h"
 #include "status.h"
 
 class Emulator {
  public:
-  Emulator(const std::istream input, const std::ostream output)
-      : input_(input.rdbuf()), output_(output.rdbuf()), is_halted_(false) {}
+  Emulator(Accumulator acc, Memory mem, std::istream* input,
+           std::ostream* output);
 
+  Status Run();
+
+ private:
   Status Load(const size_t operand);
   Status Store(const size_t operand);
   Status Clear();
@@ -31,8 +33,8 @@ class Emulator {
   bool IsHalted() const;
 
  private:
-  Accumulator<Word> acc_;
-  Memory<Word, kMemorySize> mem_;
+  Accumulator acc_;
+  Memory mem_;
   std::istream input_;
   std::ostream output_;
   bool is_halted_;

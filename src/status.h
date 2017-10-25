@@ -3,6 +3,7 @@
 
 // Copied from https://github.com/google/lmctfy/blob/master/util/task/status.h
 
+#include <ostream>
 #include <string>
 
 class Status {
@@ -32,5 +33,7 @@ class Status {
   Status::Code code_;
   std::string message_;
 };
+
+std::ostream& operator<<(std::ostream& os, const Status& status);
 
 #endif  // STATUS_H_

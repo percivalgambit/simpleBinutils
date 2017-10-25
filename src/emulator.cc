@@ -1,7 +1,88 @@
 #include "emulator.h"
 
 #include "constants.h"
+#include "decode_instruction.h"
+#include "instruction.h"
 #include "status.h"
+#include "statusor.h"
+
+Emulator::Emulator(Accumulator acc, Memory mem, std::istream* input,
+                   std::ostream* output)
+    : acc_(acc),
+      mem_(mem),
+      input_(input->rdbuf()),
+      output_(output->rdbuf()),
+      is_halted_(false) {}
+
+Status Emulator::Run() {
+  while (!IsHalted()) {
+    const Instruction& instruction = DecodeInstruction(&mem_);
+    Status status;
+    switch (instruction.code) {
+      case Instruction::Code::LOD:
+        status = Load(*instruction.operand);
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::STO:
+        status = Store(*instruction.operand);
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::ADD:
+        status = Add(*instruction.operand);
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::BZE:
+        status = BranchZero(*instruction.operand);
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::BNE:
+        status = BranchNegative(*instruction.operand);
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::BRA:
+        status = BranchUnconditional(*instruction.operand);
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::INP:
+        status = ReadInput();
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::OUT:
+        status = WriteOutput();
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::CLA:
+        status = Clear();
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+      case Instruction::Code::HLT:
+        status = Halt();
+        if (!status.IsOk()) {
+          return status;
+        }
+        break;
+    }
+  }
+  return Status::OK;
+}
 
 Status Emulator::Load(const size_t operand) {
   if (IsHalted()) {
