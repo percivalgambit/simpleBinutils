@@ -7,7 +7,7 @@
 #include "status.h"
 #include "statusor.h"
 
-Memory::Memory(std::ifstream* program) {
+Memory::Memory(std::ifstream* program) : instruction_pointer_(0) {
   program->read(reinterpret_cast<char*>(data_.data()), kMemorySize);
 }
 
