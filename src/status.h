@@ -12,6 +12,7 @@ class Status {
     kOK = 0,
     kOutOfBounds,
     kIsHalted,
+    kInvalid,
   };
 
   static const Status& OK;

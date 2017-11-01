@@ -79,6 +79,8 @@ Status Emulator::Run() {
           return status;
         }
         break;
+      default:
+        return Status(Status::Code::kInvalid);
     }
   }
   return Status::OK;
