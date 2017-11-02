@@ -1,9 +1,11 @@
-#ifndef INSTRUCTION_H_
-#define INSTRUCTION_H_
+#ifndef COMMON_INSTRUCTION_H_
+#define COMMON_INSTRUCTION_H_
 
 #include <experimental/optional>
 
-#include "constants.h"
+#include "common/constants.h"
+
+namespace common {
 
 struct Instruction {
   enum class Code : Word {
@@ -28,4 +30,6 @@ struct Instruction {
   std::experimental::optional<Word> operand;
 };
 
-#endif  // INSTRUCTION_H_
+}  // namespace common
+
+#endif  // COMMON_INSTRUCTION_H_

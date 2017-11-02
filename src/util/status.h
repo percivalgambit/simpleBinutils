@@ -1,10 +1,12 @@
-#ifndef STATUS_H_
-#define STATUS_H_
+#ifndef UTIL_STATUS_H_
+#define UTIL_STATUS_H_
 
 // Copied from https://github.com/google/lmctfy/blob/master/util/task/status.h
 
 #include <ostream>
 #include <string>
+
+namespace util {
 
 class Status {
  public:
@@ -37,4 +39,6 @@ class Status {
 
 std::ostream& operator<<(std::ostream& os, const Status& status);
 
-#endif  // STATUS_H_
+}  // namespace util
+
+#endif  // UTIL_STATUS_H_

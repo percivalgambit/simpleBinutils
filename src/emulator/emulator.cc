@@ -1,10 +1,17 @@
-#include "emulator.h"
+#include "emulator/emulator.h"
 
-#include "constants.h"
-#include "decode_instruction.h"
-#include "instruction.h"
-#include "status.h"
-#include "statusor.h"
+#include "common/constants.h"
+#include "common/instruction.h"
+#include "emulator/decode_instruction.h"
+#include "util/status.h"
+#include "util/statusor.h"
+
+using common::Instruction;
+using common::Word;
+using util::Status;
+using util::StatusOr;
+
+namespace emulator {
 
 Emulator::Emulator(Accumulator acc, Memory mem, std::istream* input,
                    std::ostream* output)
@@ -14,71 +21,37 @@ Emulator::Emulator(Accumulator acc, Memory mem, std::istream* input,
       output_(output->rdbuf()),
       is_halted_(false) {}
 
+#define EXECUTE_ONE_OPERAND(code_name, func) \
+  case Instruction::Code::code_name:         \
+    status = func(*instruction.operand);     \
+    if (!status.IsOk()) {                    \
+      return status;                         \
+    }                                        \
+    break;
+
+#define EXECUTE_ZERO_OPERANDS(code_name, func) \
+  case Instruction::Code::code_name:           \
+    status = func();                           \
+    if (!status.IsOk()) {                      \
+      return status;                           \
+    }                                          \
+    break
+
 Status Emulator::Run() {
   while (!IsHalted()) {
     const Instruction& instruction = DecodeInstruction(&mem_);
     Status status;
     switch (instruction.code) {
-      case Instruction::Code::LOD:
-        status = Load(*instruction.operand);
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::STO:
-        status = Store(*instruction.operand);
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::ADD:
-        status = Add(*instruction.operand);
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::BZE:
-        status = BranchZero(*instruction.operand);
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::BNE:
-        status = BranchNegative(*instruction.operand);
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::BRA:
-        status = BranchUnconditional(*instruction.operand);
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::INP:
-        status = ReadInput();
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::OUT:
-        status = WriteOutput();
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::CLA:
-        status = Clear();
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
-      case Instruction::Code::HLT:
-        status = Halt();
-        if (!status.IsOk()) {
-          return status;
-        }
-        break;
+      EXECUTE_ONE_OPERAND(LOD, Load);
+      EXECUTE_ONE_OPERAND(STO, Store);
+      EXECUTE_ONE_OPERAND(ADD, Add);
+      EXECUTE_ONE_OPERAND(BZE, BranchZero);
+      EXECUTE_ONE_OPERAND(BNE, BranchNegative);
+      EXECUTE_ONE_OPERAND(BRA, BranchUnconditional);
+      EXECUTE_ZERO_OPERANDS(INP, ReadInput);
+      EXECUTE_ZERO_OPERANDS(OUT, WriteOutput);
+      EXECUTE_ZERO_OPERANDS(CLA, Clear);
+      EXECUTE_ZERO_OPERANDS(HLT, Halt);
       default:
         return Status(Status::Code::kInvalid);
     }
@@ -180,3 +153,5 @@ Status Emulator::Halt() {
 }
 
 bool Emulator::IsHalted() const { return is_halted_; }
+
+}  // namespace emulator

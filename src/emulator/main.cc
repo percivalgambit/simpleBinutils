@@ -1,19 +1,22 @@
-#include "emulator.h"
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 
-#include "accumulator.h"
-#include "memory.h"
-#include "status.h"
+#include "emulator/accumulator.h"
+#include "emulator/emulator.h"
+#include "emulator/memory.h"
+#include "util/status.h"
 
+using emulator::Accumulator;
+using emulator::Emulator;
+using emulator::Memory;
 using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
 using std::ifstream;
 using std::ios;
+using util::Status;
 
 int main(int argc, char* argv[]) {
   if (argc != 2) {

@@ -1,7 +1,12 @@
-#include "decode_instruction.h"
+#include "emulator/decode_instruction.h"
 
-#include "instruction.h"
-#include "memory.h"
+#include "common/instruction.h"
+#include "emulator/memory.h"
+
+using common::Instruction;
+using common::Word;
+
+namespace emulator {
 
 Instruction DecodeInstruction(Memory *memory) {
   const Instruction::Code code = Instruction::Code(memory->ReadPointer());
@@ -24,3 +29,5 @@ Instruction DecodeInstruction(Memory *memory) {
       return Instruction(code);
   }
 }
+
+}  // namespace emulator

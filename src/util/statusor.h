@@ -1,9 +1,11 @@
-#ifndef STATUSOR_H_
-#define STATUSOR_H_
+#ifndef UTIL_STATUSOR_H_
+#define UTIL_STATUSOR_H_
 
 #include <cassert>
 
-#include "status.h"
+#include "util/status.h"
+
+namespace util {
 
 template <class T>
 class StatusOr {
@@ -73,4 +75,6 @@ const T& StatusOr<T>::ValueOrDie() const {
   return value_;
 }
 
-#endif  // STATUSOR_H_
+}  // namespace util
+
+#endif  // UTIL_STATUSOR_H_

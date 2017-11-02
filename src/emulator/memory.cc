@@ -1,11 +1,18 @@
-#include "memory.h"
+#include "emulator/memory.h"
 
 #include <cstddef>
 #include <fstream>
 
-#include "constants.h"
-#include "status.h"
-#include "statusor.h"
+#include "common/constants.h"
+#include "util/status.h"
+#include "util/statusor.h"
+
+using common::kMemorySize;
+using common::Word;
+using util::Status;
+using util::StatusOr;
+
+namespace emulator {
 
 Memory::Memory(std::ifstream* program) : instruction_pointer_(0) {
   program->read(reinterpret_cast<char*>(data_.data()), kMemorySize);
@@ -40,3 +47,5 @@ void Memory::AdvancePointer() {
     instruction_pointer_ = 0;
   }
 }
+
+}  // namespace emulator

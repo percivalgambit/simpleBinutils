@@ -16,21 +16,24 @@ SHELL := /bin/bash
 CXX := g++
 #CPPFLAGS := -DNDEBUG
 CXXFLAGS := -std=gnu++17 -pedantic-errors -Wall -Wextra -Werror -march=native -O3 -MMD -MP -Isrc/
-LDLIBS := -lm
+LDLIBS :=
 
 ###### Objects' build rules ######
 
 # Defines the location of source and object files.
-OBJS := $(patsubst src/%.cc,obj/%.o,$(wildcard src/*.cc))
+COMMON_OBJS := $(patsubst src/common/%.cc,obj/common/%.o,$(wildcard src/common/*.cc))
+EMULATOR_OBJS := $(patsubst src/emulator/%.cc,obj/emulator/%.o,$(wildcard src/emulator/*.cc))
+UTIL_OBJS := $(patsubst src/util/%.cc,obj/util/%.o,$(wildcard src/util/*.cc))
+OBJS := $(COMMON_OBJS) $(EMULATOR_OBJS) $(UTIL_OBJS)
 
-obj:
+obj/common obj/emulator obj/util:
 	@mkdir -p $@
 
 # Default rule to build a C object.
 obj/%.o: src/%.cc | $$(@D)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-obj/tests/%.o: tests/unit_tests/%.cc | obj/tests
+obj/tests/%.o: tests/unit_tests/%.cc | $$(@D)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # Tracks header dependencies for future recompilation.
@@ -58,9 +61,9 @@ test: unit_test integration_test
 
 ###### Unit tests ######
 
-UNIT_TESTS :=
+UNIT_TESTS := util/status_test
 
-obj/tests:
+obj/tests/util:
 	@mkdir -p $@
 
 unit_test: CPPFLAGS += -UNDEBUG
@@ -68,12 +71,13 @@ unit_test: CXXFLAGS += -O0 -ggdb3
 unit_test: $(UNIT_TESTS:%=obj/tests/%)
 	@echo "All unit tests passed"
 
-$(UNIT_TESTS:%=obj/tests/%): | obj/tests
+$(UNIT_TESTS:%=obj/tests/%): | $$(@D)
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LOADLIBES) $(LDLIBS)
 	./$@
 
+
 ###### Special unit test parameters ######
-obj/tests/big_int_test: obj/tests/big_int_test.o
+obj/tests/util/status_test: obj/util/status.o obj/tests/util/status_test.o
 
 ###### Integration tests ######
 

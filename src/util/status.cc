@@ -1,4 +1,4 @@
-#include "status.h"
+#include "util/status.h"
 
 // Copied from https://github.com/google/lmctfy/blob/master/util/task/status.cc
 
@@ -7,6 +7,8 @@
 
 using std::ostream;
 using std::string;
+
+namespace util {
 
 const Status& Status::OK = Status();
 
@@ -42,3 +44,5 @@ ostream& operator<<(ostream& os, const Status& status) {
   os << status.ToString();
   return os;
 }
+
+}  // namespace util
