@@ -33,8 +33,8 @@ obj/common obj/emulator obj/util:
 obj/%.o: src/%.cc | $$(@D)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-obj/tests/%.o: tests/unit_tests/%.cc | $$(@D)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+obj/tests/%.o: tests/%.cc | $$(@D)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Itests -c $< -o $@
 
 # Tracks header dependencies for future recompilation.
 obj/%.d: %.cc
