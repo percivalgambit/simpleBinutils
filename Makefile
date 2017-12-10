@@ -26,14 +26,13 @@ EMULATOR_OBJS := $(patsubst src/emulator/%.cc,obj/emulator/%.o,$(wildcard src/em
 UTIL_OBJS := $(patsubst src/util/%.cc,obj/util/%.o,$(wildcard src/util/*.cc))
 OBJS := $(COMMON_OBJS) $(EMULATOR_OBJS) $(UTIL_OBJS)
 
-obj/common obj/emulator obj/util:
-	@mkdir -p $@
-
 # Default rule to build a C object.
-obj/%.o: src/%.cc | $$(@D)
+obj/%.o: src/%.cc
+	@mkdir -p $(@D)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-obj/tests/%.o: tests/%.cc | $$(@D)
+obj/tests/%.o: tests/%.cc
+	@mkdir -p $(@D)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Itests -c $< -o $@
 
 # Tracks header dependencies for future recompilation.
@@ -61,23 +60,22 @@ test: unit_test integration_test
 
 ###### Unit tests ######
 
-UNIT_TESTS := util/status_test
-
-obj/tests/util:
-	@mkdir -p $@
+UNIT_TESTS := util/status_test util/statusor_test emulator/accumulator_test
 
 unit_test: CPPFLAGS += -UNDEBUG
 unit_test: CXXFLAGS += -O0 -ggdb3
 unit_test: $(UNIT_TESTS:%=obj/tests/%)
 	@echo "All unit tests passed"
 
-$(UNIT_TESTS:%=obj/tests/%): | $$(@D)
+$(UNIT_TESTS:%=obj/tests/%):
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LOADLIBES) $(LDLIBS)
 	./$@
 
 
 ###### Special unit test parameters ######
 obj/tests/util/status_test: obj/util/status.o obj/tests/util/status_test.o
+obj/tests/util/statusor_test: obj/util/status.o obj/tests/util/statusor_test.o
+obj/tests/emulator/accumulator_test: obj/tests/emulator/accumulator_test.o
 
 ###### Integration tests ######
 

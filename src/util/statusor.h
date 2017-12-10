@@ -7,7 +7,7 @@
 
 namespace util {
 
-template <class T>
+template <typename T>
 class StatusOr {
  public:
   StatusOr(const Status& status);
