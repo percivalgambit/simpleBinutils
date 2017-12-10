@@ -8,6 +8,7 @@
 
 namespace util {
 
+// TODO: Require this value to be used if returned.
 class Status {
  public:
   enum class Code {

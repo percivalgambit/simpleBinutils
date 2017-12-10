@@ -2,11 +2,13 @@
 #include <fstream>
 #include <iostream>
 
+#include "common/constants.h"
 #include "emulator/accumulator.h"
 #include "emulator/emulator.h"
 #include "emulator/memory.h"
 #include "util/status.h"
 
+using common::Word;
 using emulator::Accumulator;
 using emulator::Emulator;
 using emulator::Memory;
@@ -14,7 +16,7 @@ using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
-using std::ifstream;
+using std::basic_ifstream;
 using std::ios;
 using util::Status;
 
@@ -25,7 +27,7 @@ int main(int argc, char* argv[]) {
   }
 
   Accumulator acc;
-  ifstream program(argv[1], ios::binary);
+  basic_ifstream<Word> program(argv[1], ios::binary);
   Memory mem(&program);
   Emulator emulator(acc, mem, &cin, &cout);
   const Status& status = emulator.Run();

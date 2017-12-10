@@ -1,7 +1,7 @@
 #include "emulator/memory.h"
 
 #include <cstddef>
-#include <fstream>
+#include <istream>
 
 #include "common/constants.h"
 #include "util/status.h"
@@ -14,8 +14,9 @@ using util::StatusOr;
 
 namespace emulator {
 
-Memory::Memory(std::ifstream* program) : instruction_pointer_(0) {
-  program->read(reinterpret_cast<char*>(data_.data()), kMemorySize);
+Memory::Memory(std::basic_istream<common::Word>* program)
+    : instruction_pointer_(0) {
+  program->read(data_.data(), kMemorySize);
 }
 
 StatusOr<Word> Memory::Load(const size_t location) const {

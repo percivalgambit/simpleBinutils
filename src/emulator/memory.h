@@ -3,7 +3,7 @@
 
 #include <array>
 #include <cstddef>
-#include <fstream>
+#include <istream>
 
 #include "common/constants.h"
 #include "util/status.h"
@@ -13,7 +13,7 @@ namespace emulator {
 
 class Memory {
  public:
-  Memory(std::ifstream* program);
+  Memory(std::basic_istream<common::Word>* program);
 
   util::StatusOr<common::Word> Load(const size_t location) const;
   util::Status Store(const size_t location, const common::Word value);
