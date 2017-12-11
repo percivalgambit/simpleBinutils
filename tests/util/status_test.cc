@@ -25,15 +25,15 @@ void TestEquality() {
   ASSERT_EQ(ok_status, Status::OK);
   ASSERT_NEQ(ok_status, Status(Status::Code::kInvalid));
 
-  Status halted_status(Status::Code::kIsHalted);
-  ASSERT_EQ(halted_status, halted_status);
-  ASSERT_NEQ(halted_status, Status::OK);
-  ASSERT_NEQ(halted_status, Status(Status::Code::kOutOfBounds));
+  Status invalid_status(Status::Code::kInvalid);
+  ASSERT_EQ(invalid_status, invalid_status);
+  ASSERT_NEQ(invalid_status, Status::OK);
+  ASSERT_NEQ(invalid_status, Status(Status::Code::kOutOfBounds));
 
-  Status halted_message_status(Status::Code::kIsHalted, "foo");
-  ASSERT_NEQ(halted_status, halted_message_status);
-  ASSERT_EQ(halted_message_status, Status(Status::Code::kIsHalted, "foo"));
-  ASSERT_NEQ(halted_message_status, Status(Status::Code::kIsHalted, "bar"));
+  Status invalid_message_status(Status::Code::kInvalid, "foo");
+  ASSERT_NEQ(invalid_status, invalid_message_status);
+  ASSERT_EQ(invalid_message_status, Status(Status::Code::kInvalid, "foo"));
+  ASSERT_NEQ(invalid_message_status, Status(Status::Code::kInvalid, "bar"));
 }
 
 void TestIsOk() {
@@ -50,8 +50,8 @@ void TestStatusCode() {
   ASSERT_EQ(ok_status.StatusCode(), Status::Code::kOK);
   ASSERT_EQ(Status::OK.StatusCode(), Status::Code::kOK);
 
-  Status halted_status(Status::Code::kIsHalted);
-  ASSERT_EQ(halted_status.StatusCode(), Status::Code::kIsHalted);
+  Status invalid_status(Status::Code::kInvalid);
+  ASSERT_EQ(invalid_status.StatusCode(), Status::Code::kInvalid);
 }
 
 void TestMessage() {

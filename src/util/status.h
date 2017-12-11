@@ -14,7 +14,6 @@ class Status {
   enum class Code {
     kOK = 0,
     kOutOfBounds,
-    kIsHalted,
     kInvalid,
   };
 
