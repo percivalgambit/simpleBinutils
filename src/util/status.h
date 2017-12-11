@@ -24,8 +24,8 @@ class Status {
   Status(const Status::Code code);
   Status(const Status::Code code, const std::string& message);
 
-  bool operator==(const Status& x) const;
-  bool operator!=(const Status& x) const;
+  bool operator==(const Status& other) const;
+  bool operator!=(const Status& other) const;
 
   bool IsOk() const;
   Status::Code StatusCode() const;

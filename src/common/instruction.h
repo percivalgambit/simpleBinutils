@@ -26,6 +26,10 @@ struct Instruction {
   Instruction(const Code code, const Word operand)
       : code(code), operand(operand) {}
 
+  bool operator==(const Instruction& other) const {
+    return (this->code == other.code) && (this->operand == other.operand);
+  }
+
   Code code;
   std::experimental::optional<Word> operand;
 };
