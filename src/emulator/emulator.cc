@@ -1,26 +1,37 @@
 #include "emulator/emulator.h"
 
 #include <cassert>
+#include <iostream>
 
 #include "common/constants.h"
 #include "common/instruction.h"
+#include "emulator/accumulator.h"
 #include "emulator/decode_instruction.h"
 #include "util/status.h"
 #include "util/statusor.h"
 
 using common::Instruction;
 using common::Word;
+using emulator::Accumulator;
 using util::Status;
 using util::StatusOr;
 
 namespace emulator {
 
-Emulator::Emulator(Accumulator acc, Memory mem, std::istream* input,
+Emulator::Emulator(std::basic_istream<Word>* program)
+    : Emulator(program, &std::cin, &std::cout) {}
+
+Emulator::Emulator(std::basic_istream<Word>* program, std::istream* input,
                    std::ostream* output)
+    : Emulator(program, input, output, Accumulator()) {}
+
+Emulator::Emulator(std::basic_istream<common::Word>* program,
+                   std::istream* input, std::ostream* output,
+                   const Accumulator acc)
     : acc_(acc),
-      mem_(mem),
-      input_(input->rdbuf()),
-      output_(output->rdbuf()),
+      mem_(program),
+      input_(input),
+      output_(output),
       is_halted_(false) {}
 
 #define EXECUTE_ONE_OPERAND(code_name, func) \
@@ -115,8 +126,8 @@ Status Emulator::BranchUnconditional(const size_t operand) {
 
 Status Emulator::ReadInput() {
   assert(!IsHalted());
-  Word input_word;
-  input_ >> input_word;
+  char input_word;
+  *input_ >> input_word;
   acc_.Set(input_word);
   return Status::OK;
 }
@@ -124,7 +135,7 @@ Status Emulator::ReadInput() {
 Status Emulator::WriteOutput() {
   assert(!IsHalted());
   Word output_word = acc_.Get();
-  output_ << output_word;
+  *output_ << char(output_word);
   return Status::OK;
 }
 
@@ -135,5 +146,7 @@ Status Emulator::Halt() {
 }
 
 bool Emulator::IsHalted() const { return is_halted_; }
+
+Word Emulator::ReadPointer() const { return mem_.ReadPointer(); }
 
 }  // namespace emulator

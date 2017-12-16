@@ -12,12 +12,19 @@ namespace emulator {
 
 class Emulator {
  public:
-  Emulator(Accumulator acc, Memory mem, std::istream* input,
+  Emulator(std::basic_istream<common::Word>* program);
+
+  // TODO: make private for testing
+  Emulator(std::basic_istream<common::Word>* program, std::istream* input,
            std::ostream* output);
+
+  // TODO: make private for testing
+  Emulator(std::basic_istream<common::Word>* program, std::istream* input,
+           std::ostream* output, const Accumulator acc);
 
   util::Status Run();
 
- private:
+  // TODO: make private for tests
   util::Status Load(const size_t operand);
   util::Status Store(const size_t operand);
   util::Status Clear();
@@ -34,11 +41,14 @@ class Emulator {
   util::Status Halt();
   bool IsHalted() const;
 
+  // TODO: make private for tests
+  common::Word ReadPointer() const;
+
  private:
   Accumulator acc_;
   Memory mem_;
-  std::istream input_;
-  std::ostream output_;
+  std::istream* input_;
+  std::ostream* output_;
   bool is_halted_;
 };
 

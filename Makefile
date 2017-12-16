@@ -60,7 +60,7 @@ test: unit_test integration_test
 
 ###### Unit tests ######
 
-UNIT_TESTS := util/status_test util/statusor_test emulator/accumulator_test emulator/memory_test emulator/decode_instruction_test
+UNIT_TESTS := util/status_test util/statusor_test emulator/accumulator_test emulator/memory_test emulator/decode_instruction_test emulator/emulator_test
 
 unit_test: CPPFLAGS += -UNDEBUG
 unit_test: CXXFLAGS += -O0 -ggdb3
@@ -78,6 +78,7 @@ obj/tests/util/statusor_test: obj/util/status.o obj/tests/util/statusor_test.o
 obj/tests/emulator/accumulator_test: obj/tests/emulator/accumulator_test.o
 obj/tests/emulator/memory_test: obj/util/status.o obj/emulator/memory.o obj/tests/emulator/memory_test.o
 obj/tests/emulator/decode_instruction_test: obj/util/status.o obj/emulator/memory.o obj/emulator/decode_instruction.o obj/tests/emulator/decode_instruction_test.o
+obj/tests/emulator/emulator_test: obj/util/status.o obj/emulator/memory.o obj/emulator/decode_instruction.o obj/emulator/emulator.o obj/tests/emulator/emulator_test.o
 
 ###### Integration tests ######
 

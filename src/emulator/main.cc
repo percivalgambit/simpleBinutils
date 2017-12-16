@@ -1,11 +1,8 @@
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
 
 #include "common/constants.h"
-#include "emulator/accumulator.h"
 #include "emulator/emulator.h"
-#include "emulator/memory.h"
 #include "util/status.h"
 
 using common::Word;
@@ -26,10 +23,8 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  Accumulator acc;
   basic_ifstream<Word> program(argv[1], ios::binary);
-  Memory mem(&program);
-  Emulator emulator(acc, mem, &cin, &cout);
+  Emulator emulator(&program);
   const Status& status = emulator.Run();
   if (!status.IsOk()) {
     cerr << status << endl;
