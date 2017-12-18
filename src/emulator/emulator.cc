@@ -25,9 +25,8 @@ Emulator::Emulator(std::basic_istream<Word>* program, std::istream* input,
                    std::ostream* output)
     : Emulator(program, input, output, Accumulator()) {}
 
-Emulator::Emulator(std::basic_istream<common::Word>* program,
-                   std::istream* input, std::ostream* output,
-                   const Accumulator acc)
+Emulator::Emulator(std::basic_istream<Word>* program, std::istream* input,
+                   std::ostream* output, const Accumulator acc)
     : acc_(acc),
       mem_(program),
       input_(input),

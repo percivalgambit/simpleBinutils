@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 
+#include "common/constants.h"
 #include "emulator/accumulator.h"
 #include "emulator/memory.h"
 #include "util/status.h"

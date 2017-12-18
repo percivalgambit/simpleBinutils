@@ -15,7 +15,7 @@ all: simpleEMU
 SHELL := /bin/bash
 CXX := g++
 #CPPFLAGS := -DNDEBUG
-CXXFLAGS := -std=gnu++17 -pedantic-errors -Wall -Wextra -Werror -march=native -O3 -MMD -MP -Isrc/
+CXXFLAGS := -std=gnu++17 -pedantic-errors -Wall -Wextra -Werror -march=native -O3 -MMD -MP -Isrc/ -O0 -ggdb3
 LDLIBS :=
 
 ###### Objects' build rules ######

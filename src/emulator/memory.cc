@@ -14,8 +14,7 @@ using util::StatusOr;
 
 namespace emulator {
 
-Memory::Memory(std::basic_istream<common::Word>* program)
-    : instruction_pointer_(0) {
+Memory::Memory(std::basic_istream<Word>* program) : instruction_pointer_(0) {
   program->read(data_.data(), kMemorySize);
 }
 

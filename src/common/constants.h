@@ -8,6 +8,7 @@ namespace common {
 
 constexpr size_t kMemorySize = 1024;
 using Word = int16_t;
+using WordInt = int32_t;
 
 }  // namespace common
 
