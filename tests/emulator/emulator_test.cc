@@ -8,9 +8,11 @@
 
 #include "common/constants.h"
 #include "common/instruction.h"
+#include "common/widen_string.h"
 #include "emulator/accumulator.h"
 
 using common::Instruction;
+using common::WidenString;
 using common::Word;
 using emulator::Accumulator;
 using emulator::Emulator;
@@ -45,8 +47,8 @@ int main() {
 
 Emulator newEmulator(const std::string &program, std::istream *input,
                      std::ostream *output, const Accumulator acc) {
-  std::basic_string<Word> converted_program(program.cbegin(), program.cend());
-  std::basic_stringstream<Word> program_stream(converted_program);
+  const std::string &converted_program = WidenString(program);
+  std::stringstream program_stream(converted_program);
   return Emulator(&program_stream, input, output, acc);
 }
 

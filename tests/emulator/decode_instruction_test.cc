@@ -7,8 +7,10 @@
 
 #include "common/constants.h"
 #include "common/instruction.h"
+#include "common/widen_string.h"
 
 using common::Instruction;
+using common::WidenString;
 using common::Word;
 using emulator::DecodeInstruction;
 using emulator::Memory;
@@ -23,8 +25,8 @@ int main() {
 
 // TODO: deduplicate from this and memory_test
 Memory newMemory(const std::string &program) {
-  std::basic_string<Word> converted_program(program.cbegin(), program.cend());
-  std::basic_stringstream<Word> program_stream(converted_program);
+  const std::string &converted_program = WidenString(program);
+  std::stringstream program_stream(converted_program);
   return Memory(&program_stream);
 }
 

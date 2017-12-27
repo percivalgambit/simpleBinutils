@@ -6,8 +6,10 @@
 #include "asserts.h"
 
 #include "common/constants.h"
+#include "common/widen_string.h"
 
 using common::kMemorySize;
+using common::WidenString;
 using common::Word;
 using emulator::Memory;
 
@@ -24,8 +26,8 @@ int main() {
 }
 
 Memory newMemory(const std::string &program) {
-  std::basic_string<Word> converted_program(program.cbegin(), program.cend());
-  std::basic_stringstream<Word> program_stream(converted_program);
+  const std::string &converted_program = WidenString(program);
+  std::stringstream program_stream(converted_program);
   return Memory(&program_stream);
 }
 

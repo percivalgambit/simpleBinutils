@@ -76,9 +76,9 @@ $(UNIT_TESTS:%=obj/tests/%):
 obj/tests/util/status_test: obj/util/status.o obj/tests/util/status_test.o
 obj/tests/util/statusor_test: obj/util/status.o obj/tests/util/statusor_test.o
 obj/tests/emulator/accumulator_test: obj/tests/emulator/accumulator_test.o
-obj/tests/emulator/memory_test: obj/util/status.o obj/emulator/memory.o obj/tests/emulator/memory_test.o
-obj/tests/emulator/decode_instruction_test: obj/util/status.o obj/emulator/memory.o obj/emulator/decode_instruction.o obj/tests/emulator/decode_instruction_test.o
-obj/tests/emulator/emulator_test: obj/util/status.o obj/emulator/memory.o obj/emulator/decode_instruction.o obj/emulator/emulator.o obj/tests/emulator/emulator_test.o
+obj/tests/emulator/memory_test: obj/util/status.o obj/common/widen_string.o obj/emulator/memory.o obj/tests/emulator/memory_test.o
+obj/tests/emulator/decode_instruction_test: obj/util/status.o obj/common/widen_string.o obj/emulator/memory.o obj/emulator/decode_instruction.o obj/tests/emulator/decode_instruction_test.o
+obj/tests/emulator/emulator_test: obj/util/status.o obj/common/widen_string.o obj/emulator/memory.o obj/emulator/decode_instruction.o obj/emulator/emulator.o obj/tests/emulator/emulator_test.o
 
 ###### Integration tests ######
 

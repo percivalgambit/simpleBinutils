@@ -18,14 +18,14 @@ using util::StatusOr;
 
 namespace emulator {
 
-Emulator::Emulator(std::basic_istream<Word>* program)
+Emulator::Emulator(std::istream* program)
     : Emulator(program, &std::cin, &std::cout) {}
 
-Emulator::Emulator(std::basic_istream<Word>* program, std::istream* input,
+Emulator::Emulator(std::istream* program, std::istream* input,
                    std::ostream* output)
     : Emulator(program, input, output, Accumulator()) {}
 
-Emulator::Emulator(std::basic_istream<Word>* program, std::istream* input,
+Emulator::Emulator(std::istream* program, std::istream* input,
                    std::ostream* output, const Accumulator acc)
     : acc_(acc),
       mem_(program),

@@ -13,15 +13,14 @@ namespace emulator {
 
 class Emulator {
  public:
-  Emulator(std::basic_istream<common::Word>* program);
+  Emulator(std::istream* program);
 
   // TODO: make private for testing
-  Emulator(std::basic_istream<common::Word>* program, std::istream* input,
-           std::ostream* output);
+  Emulator(std::istream* program, std::istream* input, std::ostream* output);
 
   // TODO: make private for testing
-  Emulator(std::basic_istream<common::Word>* program, std::istream* input,
-           std::ostream* output, const Accumulator acc);
+  Emulator(std::istream* program, std::istream* input, std::ostream* output,
+           const Accumulator acc);
 
   util::Status Run();
 
