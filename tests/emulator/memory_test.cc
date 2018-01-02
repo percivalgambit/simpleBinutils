@@ -4,14 +4,14 @@
 #include <string>
 
 #include "asserts.h"
+#include "widen_string.h"
 
 #include "common/constants.h"
-#include "common/widen_string.h"
 
 using common::kMemorySize;
-using common::WidenString;
 using common::Word;
 using emulator::Memory;
+using tests::WidenString;
 
 void TestLoad();
 void TestStore();

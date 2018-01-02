@@ -5,17 +5,17 @@
 #include <string>
 
 #include "asserts.h"
+#include "widen_string.h"
 
 #include "common/constants.h"
 #include "common/instruction.h"
-#include "common/widen_string.h"
 #include "emulator/accumulator.h"
 
 using common::Instruction;
-using common::WidenString;
 using common::Word;
 using emulator::Accumulator;
 using emulator::Emulator;
+using tests::WidenString;
 
 void TestWriteOutput();
 void TestLoad();

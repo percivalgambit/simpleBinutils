@@ -4,16 +4,16 @@
 #include <string>
 
 #include "asserts.h"
+#include "widen_string.h"
 
 #include "common/constants.h"
 #include "common/instruction.h"
-#include "common/widen_string.h"
 
 using common::Instruction;
-using common::WidenString;
 using common::Word;
 using emulator::DecodeInstruction;
 using emulator::Memory;
+using tests::WidenString;
 
 void TestDecodeInstruction();
 
