@@ -8,6 +8,7 @@ using common::Word;
 
 namespace emulator {
 
+// TODO: Add error here
 Instruction DecodeInstruction(Memory *memory) {
   const Instruction::Code code = Instruction::Code(memory->ReadPointer());
   memory->AdvancePointer();

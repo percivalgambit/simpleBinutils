@@ -6,6 +6,7 @@
 
 namespace common {
 
+// TODO: Make these specified as flags during the build
 constexpr size_t kMemorySize = 1024;
 using Word = int16_t;
 
