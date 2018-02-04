@@ -8,7 +8,7 @@ SIMPLEEMU_SRC := src/emulator/main.cc $(STATUS_SRC) $(EMULATOR_SRC)
 
 WIDEN_STRING_SRC := test/widen_string.cc
 
-GEN_HELLO_PROG_SRC := test/emulator/integration/gen_hello_prog.cc $(WIDEN_STRING_SRC)
+GEN_HELLO_PROG_SRC := test/integration/emulator/gen_hello_prog.cc $(WIDEN_STRING_SRC)
 GEN_HELLO_PROG_BIN := obj/integration_test/bin/gen_hello_prog
 
 $(eval $(call binary,simpleEMU,$(SIMPLEEMU_SRC)))

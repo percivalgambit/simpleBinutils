@@ -1,65 +1,33 @@
-#include "emulator/accumulator.h"
+#include "catch.hpp"
 
-#include "asserts.h"
+#include "emulator/accumulator.h"
 
 using emulator::Accumulator;
 
-void TestGet();
-void TestSet();
-void TestReset();
-void TestAdd();
-void TestIsZero();
-void TestIsNegative();
-
-int main() {
-  TestGet();
-  TestSet();
-  TestReset();
-  TestAdd();
-  TestIsZero();
-  TestIsNegative();
-
-  return 0;
-}
-
-void TestGet() {
-  Accumulator default_acc;
-  ASSERT_EQ(default_acc.Get(), 0);
-
-  Accumulator acc(3);
-  ASSERT_EQ(acc.Get(), 3);
-}
-
-void TestSet() {
+TEST_CASE("Accumulators can store values") {
   Accumulator acc;
-  acc.Set(4);
-  ASSERT_EQ(acc.Get(), 4);
-}
+  REQUIRE(acc.Get() == 0);
 
-void TestReset() {
-  Accumulator acc(3);
-  acc.Reset();
-  ASSERT_EQ(acc.Get(), 0);
-}
+  acc.Set(3);
+  REQUIRE(acc.Get() == 3);
 
-void TestAdd() {
-  Accumulator acc(2);
   acc.Add(4);
-  ASSERT_EQ(acc.Get(), 6);
+  REQUIRE(acc.Get() == 7);
+
+  acc.Reset();
+  REQUIRE(acc.Get() == 0);
 }
 
-void TestIsZero() {
-  Accumulator zero_acc(0);
-  assert(zero_acc.IsZero());
+TEST_CASE("Values in accumulators can be tested") {
+  Accumulator zero_acc;
+  REQUIRE(zero_acc.IsZero());
+  REQUIRE_FALSE(zero_acc.IsNegative());
 
-  Accumulator nonzero_acc(3);
-  assert(!nonzero_acc.IsZero());
-}
-
-void TestIsNegative() {
   Accumulator positive_acc(3);
-  assert(!positive_acc.IsNegative());
+  REQUIRE_FALSE(positive_acc.IsZero());
+  REQUIRE_FALSE(positive_acc.IsNegative());
 
-  Accumulator negative_acc(-3);
-  assert(negative_acc.IsNegative());
+  Accumulator negative_acc(-1);
+  REQUIRE_FALSE(negative_acc.IsZero());
+  REQUIRE(negative_acc.IsNegative());
 }

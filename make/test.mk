@@ -1,6 +1,7 @@
+# TODO: make it possible to rerun unit tests without having to make clean
 define unit_test =
 unit_test: obj/unit_test/$(1)
-obj/unit_test/$(1): $(call debug_objects,$(2)) $(call test_objects,$(3))
+obj/unit_test/$(1): $(call debug_objects,$(2)) $(call test_objects,$(3)) obj/test/catch_main.o
 	@mkdir -p $$(@D)
 	$(CXX) $(LDFLAGS) $$^ -o $$@ $(LOADLIBES) $(LDLIBS)
 	./$$@
@@ -21,8 +22,8 @@ endef
 %.test: SUT             =
 %.test: INPUT_PROG      = obj/integration_test/prog/$(@:%.test=%).bin
 %.test: SHOULD_FAIL     =
-%.test: EXPECTED_STDOUT = test/integration/$(@:.test=.stdout.reference)
-%.test: EXPECTED_STDERR = test/integration/$(@:.test=.stderr.reference)
+%.test: EXPECTED_STDOUT = test/integration/reference/$(@:.test=.stdout.reference)
+%.test: EXPECTED_STDERR = test/integration/reference/$(@:.test=.stderr.reference)
 %.test: ACTUAL_STDOUT   = obj/integration_test/out/$(@:.test=.stdout)
 %.test: ACTUAL_STDERR   = obj/integration_test/out/$(@:.test=.stderr)
 %.test: $$(SUT) $$(INPUT_PROG)

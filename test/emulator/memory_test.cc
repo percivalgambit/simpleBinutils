@@ -1,29 +1,17 @@
-#include "emulator/memory.h"
+#include "catch.hpp"
 
 #include <sstream>
 #include <string>
 
-#include "asserts.h"
 #include "widen_string.h"
 
 #include "common/constants.h"
+#include "emulator/memory.h"
 
-using common::kMemorySize;
 using common::Word;
+using common::kMemorySize;
 using emulator::Memory;
 using tests::WidenString;
-
-void TestLoad();
-void TestStore();
-void TestInstructionPointer();
-
-int main() {
-  TestLoad();
-  TestStore();
-  TestInstructionPointer();
-
-  return 0;
-}
 
 Memory newMemory(const std::string &program) {
   const std::string &converted_program = WidenString(program);
@@ -31,46 +19,45 @@ Memory newMemory(const std::string &program) {
   return Memory(&program_stream);
 }
 
-void TestLoad() {
+TEST_CASE("Values can be stored in and loaded from memory objects") {
   Memory mem = newMemory("foo");
 
-  ASSERT_VALUE_EQ(mem.Load(0), 'f');
-  ASSERT_VALUE_EQ(mem.Load(1), 'o');
-  ASSERT_VALUE_EQ(mem.Load(2), 'o');
-  ASSERT_NOT_OK(mem.Load(kMemorySize));
+  REQUIRE(mem.Load(0).ValueOrDie() == 'f');
+  REQUIRE(mem.Load(1).ValueOrDie() == 'o');
+  REQUIRE(mem.Load(2).ValueOrDie() == 'o');
+
+  REQUIRE(mem.Store(0, 'c').IsOk());
+  REQUIRE(mem.Store(0, 'b').IsOk());
+  REQUIRE(mem.Store(1, 'a').IsOk());
+  REQUIRE(mem.Store(2, 'r').IsOk());
+  REQUIRE(mem.Store(3, 'c').IsOk());
+  REQUIRE(mem.Load(0).ValueOrDie() == 'b');
+  REQUIRE(mem.Load(1).ValueOrDie() == 'a');
+  REQUIRE(mem.Load(2).ValueOrDie() == 'r');
 }
 
-void TestStore() {
-  Memory mem = newMemory("b");
-
-  ASSERT_OK(mem.Store(0, 'c'));
-  ASSERT_OK(mem.Store(0, 'f'));
-  ASSERT_OK(mem.Store(1, 'o'));
-  ASSERT_OK(mem.Store(2, 'o'));
-  ASSERT_NOT_OK(mem.Store(kMemorySize, 'c'));
-
-  ASSERT_VALUE_EQ(mem.Load(0), 'f');
-  ASSERT_VALUE_EQ(mem.Load(1), 'o');
-  ASSERT_VALUE_EQ(mem.Load(2), 'o');
-}
-
-void TestInstructionPointer() {
+TEST_CASE("The instruction pointer can be advanced and read from") {
   Memory mem = newMemory("foo");
 
-  ASSERT_EQ(mem.ReadPointer(), 'f');
+  REQUIRE(mem.ReadPointer() == 'f');
   mem.AdvancePointer();
-  ASSERT_EQ(mem.ReadPointer(), 'o');
+  REQUIRE(mem.ReadPointer() == 'o');
   mem.AdvancePointer();
-  ASSERT_EQ(mem.ReadPointer(), 'o');
-  mem.AdvancePointer();
+  REQUIRE(mem.ReadPointer() == 'o');
 
-  ASSERT_OK(mem.Jump(0));
-  ASSERT_EQ(mem.ReadPointer(), 'f');
+  REQUIRE(mem.Jump(0).IsOk());
+  REQUIRE(mem.ReadPointer() == 'f');
   mem.AdvancePointer();
-  ASSERT_EQ(mem.ReadPointer(), 'o');
+  REQUIRE(mem.ReadPointer() == 'o');
   mem.AdvancePointer();
-  ASSERT_EQ(mem.ReadPointer(), 'o');
-  mem.AdvancePointer();
+  REQUIRE(mem.ReadPointer() == 'o');
+}
 
-  ASSERT_NOT_OK(mem.Jump(kMemorySize));
+TEST_CASE("Locations past the bounds of the memory can't be accessed") {
+  Memory mem = newMemory("foo");
+
+  // TODO: test for actual error codes
+  REQUIRE_FALSE(mem.Load(kMemorySize).IsOk());
+  REQUIRE_FALSE(mem.Store(kMemorySize, 'a').IsOk());
+  REQUIRE_FALSE(mem.Jump(kMemorySize).IsOk());
 }

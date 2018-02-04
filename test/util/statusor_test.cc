@@ -1,59 +1,41 @@
-#include "util/statusor.h"
-
-#include "asserts.h"
+#include "catch.hpp"
 
 #include "util/status.h"
+#include "util/statusor.h"
 
 using util::Status;
 using util::StatusOr;
 
-void TestGetStatus();
-void TestIsOk();
-void TestValueOrDie();
+TEST_CASE("StatusOr objects can contain values") {
+  StatusOr<int> statusor(3);
 
-int main() {
-  TestGetStatus();
-  TestIsOk();
-  TestValueOrDie();
-
-  return 0;
+  REQUIRE(statusor.GetStatus() == Status::OK);
+  REQUIRE(statusor.IsOk());
+  REQUIRE(statusor.ValueOrDie() == 3);
 }
 
-void TestGetStatus() {
-  StatusOr<int> statusor_value(3);
-  ASSERT_EQ(statusor_value.GetStatus(), Status::OK);
+TEST_CASE("StatusOr objects can contain statuses") {
+  Status status(Status::Code::kInvalid);
+  StatusOr<int> statusor(status);
+
+  REQUIRE(statusor.GetStatus() == status);
+  REQUIRE_FALSE(statusor.IsOk());
+  // TODO: Add test for ValueOrDie
+}
+
+TEST_CASE("StatusOr objects can be converted to other types") {
+  StatusOr<int> statusor(4);
+  StatusOr<double> converted(statusor);
+
+  REQUIRE(converted.GetStatus() == Status::OK);
+  REQUIRE(converted.IsOk());
+  REQUIRE(converted.ValueOrDie() == Approx(4.0));
 
   Status status(Status::Code::kInvalid);
   StatusOr<int> statusor_status(status);
-  ASSERT_EQ(statusor_status.GetStatus(), status);
+  StatusOr<double> converted_status(statusor_status);
 
-  StatusOr<int> statusor_original(4);
-  StatusOr<double> statusor_converted(statusor_original);
-  ASSERT_EQ(statusor_converted.GetStatus(), Status::OK);
-}
-
-void TestIsOk() {
-  StatusOr<int> statusor_value(3);
-  assert(statusor_value.IsOk());
-
-  Status status(Status::Code::kInvalid);
-  StatusOr<int> statusor_status(status);
-  assert(!statusor_status.IsOk());
-
-  StatusOr<int> statusor_original(4);
-  StatusOr<double> statusor_converted(statusor_original);
-  assert(statusor_converted.IsOk());
-}
-
-void TestValueOrDie() {
-  StatusOr<int> statusor_value(3);
-  ASSERT_EQ(statusor_value.ValueOrDie(), 3);
-
-  // TODO: Add a test for failure
-  Status status(Status::Code::kInvalid);
-  StatusOr<int> statusor_status(status);
-
-  StatusOr<int> statusor_original(4);
-  StatusOr<double> statusor_converted(statusor_original);
-  ASSERT_EQ(statusor_converted.ValueOrDie(), 4.0);
+  REQUIRE(converted_status.GetStatus() == status);
+  REQUIRE_FALSE(converted_status.IsOk());
+  // TODO: Add test for ValueOrDie
 }

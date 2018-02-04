@@ -1,76 +1,41 @@
-#include "util/status.h"
+#include "catch.hpp"
 
-#include "asserts.h"
+#include "util/status.h"
 
 using util::Status;
 
-void TestEquality();
-void TestIsOk();
-void TestStatusCode();
-void TestMessage();
-void TestToString();
+TEST_CASE("Status objects can be OK (no error)") {
+  Status ok(Status::Code::kOK);
 
-int main() {
-  TestEquality();
-  TestIsOk();
-  TestStatusCode();
-  TestMessage();
-  TestToString();
+  REQUIRE(ok == Status::OK);
+  REQUIRE(ok.IsOk());
+  REQUIRE(Status::OK.IsOk());
+  REQUIRE(ok.StatusCode() == Status::Code::kOK);
 
-  return 0;
+  REQUIRE_FALSE(ok == Status(Status::Code::kInvalid));
+
+  REQUIRE(ok.ToString() == "OK");
 }
 
-void TestEquality() {
-  Status ok_status(Status::Code::kOK);
-  ASSERT_EQ(ok_status, Status::OK);
-  ASSERT_NEQ(ok_status, Status(Status::Code::kInvalid));
+TEST_CASE("Status objects can be an error") {
+  Status error(Status::Code::kInvalid);
+  REQUIRE(error == error);
+  REQUIRE_FALSE(error.IsOk());
 
-  Status invalid_status(Status::Code::kInvalid);
-  ASSERT_EQ(invalid_status, invalid_status);
-  ASSERT_NEQ(invalid_status, Status::OK);
-  ASSERT_NEQ(invalid_status, Status(Status::Code::kOutOfBounds));
+  REQUIRE(error.StatusCode() == Status::Code::kInvalid);
 
-  Status invalid_message_status(Status::Code::kInvalid, "foo");
-  ASSERT_NEQ(invalid_status, invalid_message_status);
-  ASSERT_EQ(invalid_message_status, Status(Status::Code::kInvalid, "foo"));
-  ASSERT_NEQ(invalid_message_status, Status(Status::Code::kInvalid, "bar"));
+  REQUIRE_FALSE(error == Status::OK);
+  REQUIRE_FALSE(error == Status(Status::Code::kOutOfBounds));
 }
 
-void TestIsOk() {
-  Status ok_status(Status::Code::kOK);
-  assert(ok_status.IsOk());
-  assert(Status::OK.IsOk());
+TEST_CASE("Errors can have messages") {
+  Status error(Status::Code::kInvalid, "foo");
 
-  Status not_ok_status(Status::Code::kOutOfBounds);
-  assert(!not_ok_status.IsOk());
-}
+  REQUIRE(error == error);
+  REQUIRE_FALSE(error == Status(Status::Code::kInvalid, "bar"));
 
-void TestStatusCode() {
-  Status ok_status(Status::Code::kOK);
-  ASSERT_EQ(ok_status.StatusCode(), Status::Code::kOK);
-  ASSERT_EQ(Status::OK.StatusCode(), Status::Code::kOK);
+  REQUIRE(Status::OK.Message() == "");
+  REQUIRE(error.Message() == "foo");
 
-  Status invalid_status(Status::Code::kInvalid);
-  ASSERT_EQ(invalid_status.StatusCode(), Status::Code::kInvalid);
-}
-
-void TestMessage() {
-  Status no_message_status;
-  ASSERT_EQ(no_message_status.Message(), "");
-  ASSERT_EQ(Status::OK.Message(), "");
-
-  Status message_status = Status(Status::Code::kOutOfBounds, "foo");
-  ASSERT_EQ(message_status.Message(), "foo");
-}
-
-void TestToString() {
-  Status no_message_status(Status::Code::kInvalid);
-  ASSERT_EQ(no_message_status.ToString(), "");
-
-  Status ok_status;
-  ASSERT_EQ(ok_status.ToString(), "OK");
-  ASSERT_EQ(Status::OK.ToString(), "OK");
-
-  Status message_status = Status(Status::Code::kOutOfBounds, "foo");
-  ASSERT_EQ(message_status.ToString(), "foo");
+  REQUIRE(error.ToString() == "foo");
 }
