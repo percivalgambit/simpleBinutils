@@ -3,24 +3,21 @@
 #include <sstream>
 #include <string>
 
-#include "widen_string.h"
+#include "word_stream.h"
 
 #include "common/constants.h"
 #include "emulator/memory.h"
+#include "util/status.h"
 
 using common::Word;
 using common::kMemorySize;
 using emulator::Memory;
-using tests::WidenString;
-
-Memory newMemory(const std::string &program) {
-  const std::string &converted_program = WidenString(program);
-  std::stringstream program_stream(converted_program);
-  return Memory(&program_stream);
-}
+using test::WordStream;
+using util::Status;
 
 TEST_CASE("Values can be stored in and loaded from memory objects") {
-  Memory mem = newMemory("foo");
+  WordStream program("foo");
+  Memory mem(&program);
 
   REQUIRE(mem.Load(0).ValueOrDie() == 'f');
   REQUIRE(mem.Load(1).ValueOrDie() == 'o');
@@ -37,7 +34,8 @@ TEST_CASE("Values can be stored in and loaded from memory objects") {
 }
 
 TEST_CASE("The instruction pointer can be advanced and read from") {
-  Memory mem = newMemory("foo");
+  WordStream program("foo");
+  Memory mem(&program);
 
   REQUIRE(mem.ReadPointer() == 'f');
   mem.AdvancePointer();
@@ -54,10 +52,15 @@ TEST_CASE("The instruction pointer can be advanced and read from") {
 }
 
 TEST_CASE("Locations past the bounds of the memory can't be accessed") {
-  Memory mem = newMemory("foo");
+  WordStream program("foo");
+  Memory mem(&program);
 
-  // TODO: test for actual error codes
   REQUIRE_FALSE(mem.Load(kMemorySize).IsOk());
+  REQUIRE(mem.Load(kMemorySize).GetStatus().StatusCode() ==
+          Status::Code::kOutOfBounds);
   REQUIRE_FALSE(mem.Store(kMemorySize, 'a').IsOk());
+  REQUIRE(mem.Store(kMemorySize, 'a').StatusCode() ==
+          Status::Code::kOutOfBounds);
   REQUIRE_FALSE(mem.Jump(kMemorySize).IsOk());
+  REQUIRE(mem.Jump(kMemorySize).StatusCode() == Status::Code::kOutOfBounds);
 }

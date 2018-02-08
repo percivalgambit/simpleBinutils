@@ -10,11 +10,17 @@ using std::string;
 
 namespace util {
 
+const char* Status::CodeStrings[] = {
+    "OK",
+    "OUT_OF_BOUNDS",
+    "INVALID",
+};
+
 const Status& Status::OK = Status();
 
-Status::Status() : code_(Status::Code::kOK), message_("") {}
+Status::Status() : Status(Code::kOK, "") {}
 
-Status::Status(const Status::Code code) : code_(code), message_("") {}
+Status::Status(const Status::Code code) : Status(code, "") {}
 
 Status::Status(const Status::Code code, const string& message)
     : code_(code), message_(message) {}
@@ -31,13 +37,12 @@ Status::Code Status::StatusCode() const { return code_; }
 
 const string& Status::Message() const { return message_; }
 
-// TODO: include error type in status strings.
 string Status::ToString() const {
   if (code_ == Status::Code::kOK) {
     return "OK";
   }
 
-  return message_;
+  return std::string(CodeStrings[static_cast<int>(code_)]) + ": " + message_;
 }
 
 ostream& operator<<(ostream& os, const Status& status) {

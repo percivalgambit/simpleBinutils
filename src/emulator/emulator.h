@@ -13,10 +13,7 @@ namespace emulator {
 
 class Emulator {
  public:
-  Emulator(std::istream* program);
-
-  // TODO: make private for testing
-  Emulator(std::istream* program, std::istream* input, std::ostream* output);
+  explicit Emulator(std::istream* program);
 
   // TODO: make private for testing
   Emulator(std::istream* program, std::istream* input, std::ostream* output,

@@ -3,8 +3,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
-#include "widen_string.h"
+#include "word_stream.h"
 
 #include "common/constants.h"
 #include "common/instruction.h"
@@ -15,129 +16,132 @@ using common::Instruction;
 using common::Word;
 using emulator::Accumulator;
 using emulator::Emulator;
-using tests::WidenString;
-
-Emulator newEmulator(const std::string &program, std::istream *input,
-                     std::ostream *output, const Accumulator acc) {
-  const std::string &converted_program = WidenString(program);
-  std::stringstream program_stream(converted_program);
-  return Emulator(&program_stream, input, output, acc);
-}
-
-Emulator newEmulator(const std::string &program, std::istream *input,
-                     std::ostream *output) {
-  return newEmulator(program, input, output, Accumulator());
-}
-
-Emulator newEmulator(const std::string &program) {
-  return newEmulator(program, &std::cin, &std::cout);
-}
+using test::WordStream;
 
 TEST_CASE("An emulator can read and write characters") {
   std::stringstream input;
   std::stringstream output;
-  Emulator emu = newEmulator("foo", &input, &output, Accumulator('b'));
+  WordStream program("foo");
+  Emulator emu(&program, &input, &output, Accumulator('b'));
 
-  emu.WriteOutput();
+  REQUIRE(emu.WriteOutput().IsOk());
   REQUIRE(output.str() == "b");
   input << 'c';
-  emu.ReadInput();
-  emu.WriteOutput();
+  REQUIRE(emu.ReadInput().IsOk());
+  REQUIRE(emu.WriteOutput().IsOk());
   REQUIRE(output.str() == "bc");
 }
 
 TEST_CASE("An emulator can load and store values in memory") {
   std::istringstream input;
   std::ostringstream output;
-  Emulator emu = newEmulator("foobar", &input, &output);
+  WordStream program("foobar");
+  Emulator emu(&program, &input, &output, Accumulator());
 
-  emu.Load(3);
-  emu.Store(0);
-  emu.Load(4);
-  emu.Store(1);
-  emu.Load(5);
-  emu.Store(2);
+  REQUIRE(emu.Load(3).IsOk());
+  REQUIRE(emu.Store(0).IsOk());
+  REQUIRE(emu.Load(4).IsOk());
+  REQUIRE(emu.Store(1).IsOk());
+  REQUIRE(emu.Load(5).IsOk());
+  REQUIRE(emu.Store(2).IsOk());
 
-  emu.Load(0);
-  emu.WriteOutput();
-  emu.Load(1);
-  emu.WriteOutput();
-  emu.Load(2);
-  emu.WriteOutput();
+  REQUIRE(emu.Load(0).IsOk());
+  REQUIRE(emu.WriteOutput().IsOk());
+  REQUIRE(emu.Load(1).IsOk());
+  REQUIRE(emu.WriteOutput().IsOk());
+  REQUIRE(emu.Load(2).IsOk());
+  REQUIRE(emu.WriteOutput().IsOk());
   REQUIRE(output.str() == "bar");
 }
 
 TEST_CASE("An emulator has an accumulator that can be manipulated") {
   std::stringstream input;
   std::stringstream output;
-  Emulator emu = newEmulator("!", &input, &output, Accumulator('0'));
+  WordStream program("!");
+  Emulator emu(&program, &input, &output, Accumulator('0'));
 
-  emu.Add(0);
-  emu.WriteOutput();
+  REQUIRE(emu.Add(0).IsOk());
+  REQUIRE(emu.WriteOutput().IsOk());
   REQUIRE(output.str() == "Q");
 
   output.str("");
-  emu.Clear();
-  emu.WriteOutput();
+  REQUIRE(emu.Clear().IsOk());
+  REQUIRE(emu.WriteOutput().IsOk());
   REQUIRE(output.get() == '\0');
 }
 
 TEST_CASE("An emulator has a pointer that can jump") {
   std::istringstream input;
   std::ostringstream output;
-  Emulator emu = newEmulator("bar", &input, &output, Accumulator(0));
+  WordStream program("bar");
+  Emulator emu(&program, &input, &output, Accumulator(0));
 
-  emu.BranchZero(2);
+  REQUIRE(emu.BranchZero(2).IsOk());
   REQUIRE(emu.ReadPointer() == 'r');
-  emu.BranchNegative(1);
+  REQUIRE(emu.BranchNegative(1).IsOk());
   REQUIRE(emu.ReadPointer() == 'r');
-  emu.BranchUnconditional(0);
+  REQUIRE(emu.BranchUnconditional(0).IsOk());
   REQUIRE(emu.ReadPointer() == 'b');
 
-  emu = newEmulator("bar", &input, &output, Accumulator(-1));
-  emu.BranchZero(2);
+  program = WordStream("bar");
+  emu = Emulator(&program, &input, &output, Accumulator(-1));
+  REQUIRE(emu.BranchZero(2).IsOk());
   REQUIRE(emu.ReadPointer() == 'b');
-  emu.BranchNegative(1);
+  REQUIRE(emu.BranchNegative(1).IsOk());
   REQUIRE(emu.ReadPointer() == 'a');
-  emu.BranchUnconditional(0);
+  REQUIRE(emu.BranchUnconditional(0).IsOk());
   REQUIRE(emu.ReadPointer() == 'b');
 }
 
 TEST_CASE("An emulator can halt") {
-  Emulator emu = newEmulator("foo");
+  WordStream program("foo");
+  Emulator emu(&program);
 
-  emu.Halt();
+  REQUIRE(emu.Halt().IsOk());
   REQUIRE(emu.IsHalted());
+
+  // TODO: fix this
+  /*
+  SECTION("Operations will fail when the emulator is halted") {
+    REQUIRE_FALSE(emu.Load(0).IsOk());
+    REQUIRE_FALSE(emu.Store(0).IsOk());
+    REQUIRE_FALSE(emu.Clear().IsOk());
+    REQUIRE_FALSE(emu.Add(0).IsOk());
+    REQUIRE_FALSE(emu.BranchZero(0).IsOk());
+    REQUIRE_FALSE(emu.BranchNegative(0).IsOk());
+    REQUIRE_FALSE(emu.BranchUnconditional(0).IsOk());
+    REQUIRE_FALSE(emu.ReadInput().IsOk());
+    REQUIRE_FALSE(emu.WriteOutput().IsOk());
+    REQUIRE_FALSE(emu.Halt().IsOk());
+  } */
 }
 
 TEST_CASE("An emulator can run a program") {
   std::istringstream input;
   std::stringstream output;
-  Emulator emu = newEmulator({char(Instruction::Code::LOD),
-                              16,
-                              char(Instruction::Code::OUT),
-                              char(Instruction::Code::LOD),
-                              17,
-                              char(Instruction::Code::OUT),
-                              char(Instruction::Code::LOD),
-                              18,
-                              char(Instruction::Code::OUT),
-                              char(Instruction::Code::LOD),
-                              19,
-                              char(Instruction::Code::OUT),
-                              char(Instruction::Code::LOD),
-                              20,
-                              char(Instruction::Code::OUT),
-                              char(Instruction::Code::HLT),
-                              'h',
-                              'e',
-                              'l',
-                              'l',
-                              'o'},
-                             &input, &output);
+  WordStream program(std::vector<Word>({Word(Instruction::Code::LOD),
+                                        16,
+                                        Word(Instruction::Code::OUT),
+                                        Word(Instruction::Code::LOD),
+                                        17,
+                                        Word(Instruction::Code::OUT),
+                                        Word(Instruction::Code::LOD),
+                                        18,
+                                        Word(Instruction::Code::OUT),
+                                        Word(Instruction::Code::LOD),
+                                        19,
+                                        Word(Instruction::Code::OUT),
+                                        Word(Instruction::Code::LOD),
+                                        20,
+                                        Word(Instruction::Code::OUT),
+                                        Word(Instruction::Code::HLT),
+                                        'h',
+                                        'e',
+                                        'l',
+                                        'l',
+                                        'o'}));
+  Emulator emu(&program, &input, &output, Accumulator());
 
-  emu.Run();
+  REQUIRE(emu.Run().IsOk());
   REQUIRE(output.str() == "hello");
 }
-
-// TODO: Test failure when halted

@@ -21,7 +21,7 @@ struct Instruction {
     HLT = 0
   };
 
-  Instruction(const Code code) : code(code) {}
+  explicit Instruction(const Code code) : code(code) {}
 
   Instruction(const Code code, const Word operand)
       : code(code), operand(operand) {}

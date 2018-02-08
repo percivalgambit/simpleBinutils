@@ -1,10 +1,11 @@
-# TODO: make it possible to rerun unit tests without having to make clean
+.DELETE_ON_ERROR:
+
 define unit_test =
 unit_test: obj/unit_test/$(1)
 obj/unit_test/$(1): $(call debug_objects,$(2)) $(call test_objects,$(3)) obj/test/catch_main.o
 	@mkdir -p $$(@D)
 	$(CXX) $(LDFLAGS) $$^ -o $$@ $(LOADLIBES) $(LDLIBS)
-	./$$@
+	$(DEBUG_CMD) ./$$@
 endef
 
 define integration_test =
@@ -29,7 +30,7 @@ endef
 %.test: $$(SUT) $$(INPUT_PROG)
 	@mkdir -p $(dir $(ACTUAL_STDOUT))
 	@mkdir -p $(dir $(ACTUAL_STDERR))
-	$(if $(SHOULD_FAIL),-) ./$< $(INPUT_PROG) > $(ACTUAL_STDOUT) 2> $(ACTUAL_STDERR)
+	$(if $(SHOULD_FAIL),-) $(DEBUG_CMD) ./$< $(INPUT_PROG) > $(ACTUAL_STDOUT) 2> $(ACTUAL_STDERR)
 	diff $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
 	diff $(ACTUAL_STDERR) $(EXPECTED_STDERR)
 

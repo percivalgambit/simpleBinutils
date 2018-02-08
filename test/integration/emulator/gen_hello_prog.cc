@@ -1,28 +1,30 @@
 #include <iostream>
-#include <string>
 
-#include "widen_string.h"
+#include "word_stream.h"
 
+#include "common/constants.h"
 #include "common/instruction.h"
 
 using common::Instruction;
+using common::Word;
+using test::WordStream;
 
-static constexpr char kHelloProg[] = {char(Instruction::Code::LOD),
+static constexpr Word kHelloProg[] = {Word(Instruction::Code::LOD),
                                       16,
-                                      char(Instruction::Code::OUT),
-                                      char(Instruction::Code::LOD),
+                                      Word(Instruction::Code::OUT),
+                                      Word(Instruction::Code::LOD),
                                       17,
-                                      char(Instruction::Code::OUT),
-                                      char(Instruction::Code::LOD),
+                                      Word(Instruction::Code::OUT),
+                                      Word(Instruction::Code::LOD),
                                       18,
-                                      char(Instruction::Code::OUT),
-                                      char(Instruction::Code::LOD),
+                                      Word(Instruction::Code::OUT),
+                                      Word(Instruction::Code::LOD),
                                       19,
-                                      char(Instruction::Code::OUT),
-                                      char(Instruction::Code::LOD),
+                                      Word(Instruction::Code::OUT),
+                                      Word(Instruction::Code::LOD),
                                       20,
-                                      char(Instruction::Code::OUT),
-                                      char(Instruction::Code::HLT),
+                                      Word(Instruction::Code::OUT),
+                                      Word(Instruction::Code::HLT),
                                       'h',
                                       'e',
                                       'l',
@@ -30,8 +32,7 @@ static constexpr char kHelloProg[] = {char(Instruction::Code::LOD),
                                       'o'};
 
 int main() {
-  std::string char_prog(kHelloProg, sizeof(kHelloProg));
-  std::string converted_prog = tests::WidenString(char_prog);
-  std::cout << converted_prog;
+  WordStream stream(kHelloProg);
+  std::cout << stream.rdbuf();
   return 0;
 }

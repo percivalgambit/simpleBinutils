@@ -1,5 +1,7 @@
 #include "catch.hpp"
 
+#include <stdexcept>
+
 #include "util/status.h"
 #include "util/statusor.h"
 
@@ -20,7 +22,8 @@ TEST_CASE("StatusOr objects can contain statuses") {
 
   REQUIRE(statusor.GetStatus() == status);
   REQUIRE_FALSE(statusor.IsOk());
-  // TODO: Add test for ValueOrDie
+  REQUIRE(statusor.GetStatus().StatusCode() == Status::Code::kInvalid);
+  REQUIRE_THROWS_AS(statusor.ValueOrDie(), std::runtime_error);
 }
 
 TEST_CASE("StatusOr objects can be converted to other types") {
@@ -35,7 +38,7 @@ TEST_CASE("StatusOr objects can be converted to other types") {
   StatusOr<int> statusor_status(status);
   StatusOr<double> converted_status(statusor_status);
 
-  REQUIRE(converted_status.GetStatus() == status);
   REQUIRE_FALSE(converted_status.IsOk());
-  // TODO: Add test for ValueOrDie
+  REQUIRE(converted_status.GetStatus() == status);
+  REQUIRE_THROWS_AS(converted_status.ValueOrDie(), std::runtime_error);
 }

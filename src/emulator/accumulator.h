@@ -10,7 +10,7 @@ class Accumulator {
   Accumulator() : value_(0) {}
 
   // TODO: Make private for testing
-  Accumulator(common::Word value) : value_(value) {}
+  explicit Accumulator(const common::Word value) : value_(value) {}
 
   common::Word Get() const { return value_; }
   void Set(const common::Word value) { value_ = value; }

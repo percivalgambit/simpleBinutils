@@ -8,8 +8,7 @@
 
 namespace util {
 
-// TODO: Require this value to be used if returned.
-class Status {
+class[[nodiscard]] Status {
  public:
   enum class Code {
     kOK = 0,
@@ -17,10 +16,12 @@ class Status {
     kInvalid,
   };
 
+  static const char* CodeStrings[];
+
   static const Status& OK;
 
   Status();
-  Status(const Status::Code code);
+  explicit Status(const Status::Code code);
   Status(const Status::Code code, const std::string& message);
 
   bool operator==(const Status& other) const;

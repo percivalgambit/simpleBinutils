@@ -13,7 +13,7 @@ namespace emulator {
 
 class Memory {
  public:
-  Memory(std::istream* program);
+  explicit Memory(std::istream* program);
 
   util::StatusOr<common::Word> Load(const size_t location) const;
   util::Status Store(const size_t location, const common::Word value);

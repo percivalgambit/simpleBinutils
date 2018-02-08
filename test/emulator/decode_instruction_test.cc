@@ -2,8 +2,9 @@
 
 #include <sstream>
 #include <string>
+#include <vector>
 
-#include "widen_string.h"
+#include "word_stream.h"
 
 #include "common/constants.h"
 #include "common/instruction.h"
@@ -13,31 +14,37 @@ using common::Instruction;
 using common::Word;
 using emulator::DecodeInstruction;
 using emulator::Memory;
-using tests::WidenString;
-
-// TODO: deduplicate from this and memory_test
-Memory newMemory(const std::string &program) {
-  const std::string &converted_program = WidenString(program);
-  std::stringstream program_stream(converted_program);
-  return Memory(&program_stream);
-}
+using test::WordStream;
 
 TEST_CASE("Instructions can be decoded") {
-  Memory mem = newMemory(
-      {char(Instruction::Code::LOD), 20, char(Instruction::Code::STO), 21,
-       char(Instruction::Code::ADD), 22, char(Instruction::Code::BZE), 23,
-       char(Instruction::Code::BNE), 24, char(Instruction::Code::BRA), 25,
-       char(Instruction::Code::INP), char(Instruction::Code::OUT),
-       char(Instruction::Code::CLA), char(Instruction::Code::HLT)});
+  WordStream program(std::vector<Word>(
+      {Word(Instruction::Code::LOD), 20, Word(Instruction::Code::STO), 21,
+       Word(Instruction::Code::ADD), 22, Word(Instruction::Code::BZE), 23,
+       Word(Instruction::Code::BNE), 24, Word(Instruction::Code::BRA), 25,
+       Word(Instruction::Code::INP), Word(Instruction::Code::OUT),
+       Word(Instruction::Code::CLA), Word(Instruction::Code::HLT), Word(-1)}));
+  Memory mem(&program);
 
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::LOD, 20));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::STO, 21));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::ADD, 22));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::BZE, 23));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::BNE, 24));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::BRA, 25));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::INP));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::OUT));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::CLA));
-  REQUIRE(DecodeInstruction(&mem) == Instruction(Instruction::Code::HLT));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::LOD, 20));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::STO, 21));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::ADD, 22));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::BZE, 23));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::BNE, 24));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::BRA, 25));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::INP));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::OUT));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::CLA));
+  REQUIRE(DecodeInstruction(&mem).ValueOrDie() ==
+          Instruction(Instruction::Code::HLT));
+
+  REQUIRE_FALSE(DecodeInstruction(&mem).IsOk());
 }

@@ -19,11 +19,7 @@ using util::StatusOr;
 namespace emulator {
 
 Emulator::Emulator(std::istream* program)
-    : Emulator(program, &std::cin, &std::cout) {}
-
-Emulator::Emulator(std::istream* program, std::istream* input,
-                   std::ostream* output)
-    : Emulator(program, input, output, Accumulator()) {}
+    : Emulator(program, &std::cin, &std::cout, Accumulator()) {}
 
 Emulator::Emulator(std::istream* program, std::istream* input,
                    std::ostream* output, const Accumulator acc)
@@ -51,7 +47,11 @@ Emulator::Emulator(std::istream* program, std::istream* input,
 
 Status Emulator::Run() {
   while (!IsHalted()) {
-    const Instruction& instruction = DecodeInstruction(&mem_);
+    const StatusOr<Instruction>& instruction_or = DecodeInstruction(&mem_);
+    if (!instruction_or.IsOk()) {
+      return instruction_or.GetStatus();
+    }
+    const Instruction& instruction = instruction_or.ValueOrDie();
     Status status;
     switch (instruction.code) {
       EXECUTE_ONE_OPERAND(LOD, Load);

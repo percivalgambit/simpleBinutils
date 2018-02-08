@@ -19,5 +19,5 @@ int main(int argc, char* argv[]) {
   if (!status.IsOk()) {
     std::cerr << status << std::endl;
   }
-  return int(status.StatusCode());
+  return static_cast<int>(status.StatusCode());
 }

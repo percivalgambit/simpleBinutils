@@ -1,13 +1,14 @@
-#ifndef EMULATOR_DECODE_INSTRUCTION_
-#define EMULATOR_DECODE_INSTRUCTION_
+#ifndef EMULATOR_DECODE_INSTRUCTION_H_
+#define EMULATOR_DECODE_INSTRUCTION_H_
 
 #include "common/instruction.h"
 #include "emulator/memory.h"
+#include "util/statusor.h"
 
 namespace emulator {
 
-common::Instruction DecodeInstruction(Memory *memory);
+util::StatusOr<common::Instruction> DecodeInstruction(Memory *memory);
 
 }  // namespace emulator
 
-#endif  // DECODE_INSTRUCTION_
+#endif  // EMULATOR_DECODE_INSTRUCTION_H_

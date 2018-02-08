@@ -1,15 +1,20 @@
 #include "emulator/decode_instruction.h"
 
+#include <string>
+
 #include "common/instruction.h"
 #include "emulator/memory.h"
+#include "util/status.h"
+#include "util/statusor.h"
 
 using common::Instruction;
 using common::Word;
+using util::Status;
+using util::StatusOr;
 
 namespace emulator {
 
-// TODO: Add error here
-Instruction DecodeInstruction(Memory *memory) {
+StatusOr<Instruction> DecodeInstruction(Memory *memory) {
   const Instruction::Code code = Instruction::Code(memory->ReadPointer());
   memory->AdvancePointer();
   const Word operand = memory->ReadPointer();
@@ -26,8 +31,11 @@ Instruction DecodeInstruction(Memory *memory) {
     case Instruction::Code::OUT:
     case Instruction::Code::CLA:
     case Instruction::Code::HLT:
-    default:
       return Instruction(code);
+    default:
+      return Status(Status::Code::kInvalid,
+                    "Opcode " + std::to_string(static_cast<int>(code)) +
+                        " is not a valid instruction code");
   }
 }
 
