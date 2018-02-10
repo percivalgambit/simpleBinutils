@@ -3,8 +3,7 @@
 
 // Copied from https://github.com/google/lmctfy/blob/master/util/task/statusor.h
 
-#include <stdexcept>
-
+#include "util/panic.h"
 #include "util/status.h"
 
 namespace util {
@@ -44,7 +43,7 @@ class[[nodiscard]] StatusOr {
 template <typename T>
 StatusOr<T>::StatusOr(const Status& status) : isOK_(false), status_(status) {
   if (status.IsOk()) {
-    throw std::runtime_error("Status::OK is not a valid argument to StatusOr");
+    Panic("Status::OK is not a valid argument to StatusOr");
   }
 }
 
@@ -101,7 +100,7 @@ bool StatusOr<T>::IsOk() const {
 template <typename T>
 const T& StatusOr<T>::ValueOrDie() const {
   if (!isOK_) {
-    throw std::runtime_error("Attempting to fetch value of non-OK StatusOr");
+    Panic("Attempting to fetch value of non-OK StatusOr");
   }
   return value_;
 }

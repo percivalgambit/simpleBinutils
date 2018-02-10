@@ -1,18 +1,19 @@
 #include "emulator/emulator.h"
 
-#include <cassert>
 #include <iostream>
 
 #include "common/constants.h"
 #include "common/instruction.h"
 #include "emulator/accumulator.h"
 #include "emulator/decode_instruction.h"
+#include "util/panic.h"
 #include "util/status.h"
 #include "util/statusor.h"
 
 using common::Instruction;
 using common::Word;
 using emulator::Accumulator;
+using util::Panic;
 using util::Status;
 using util::StatusOr;
 
@@ -72,7 +73,10 @@ Status Emulator::Run() {
 }
 
 Status Emulator::Load(const size_t operand) {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   StatusOr<Word> loaded_value = mem_.Load(operand);
   if (!loaded_value.IsOk()) {
     return loaded_value.GetStatus();
@@ -82,18 +86,27 @@ Status Emulator::Load(const size_t operand) {
 }
 
 Status Emulator::Store(const size_t operand) {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   return mem_.Store(operand, acc_.Get());
 }
 
 Status Emulator::Clear() {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   acc_.Reset();
   return Status::OK;
 }
 
 Status Emulator::Add(const size_t operand) {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   StatusOr<Word> loaded_value = mem_.Load(operand);
   if (!loaded_value.IsOk()) {
     return loaded_value.GetStatus();
@@ -103,7 +116,10 @@ Status Emulator::Add(const size_t operand) {
 }
 
 Status Emulator::BranchZero(const size_t operand) {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   if (acc_.Get() == 0) {
     return mem_.Jump(operand);
   }
@@ -111,7 +127,10 @@ Status Emulator::BranchZero(const size_t operand) {
 }
 
 Status Emulator::BranchNegative(const size_t operand) {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   if (acc_.Get() < 0) {
     return mem_.Jump(operand);
   }
@@ -119,12 +138,18 @@ Status Emulator::BranchNegative(const size_t operand) {
 }
 
 Status Emulator::BranchUnconditional(const size_t operand) {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   return mem_.Jump(operand);
 }
 
 Status Emulator::ReadInput() {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   char input_word;
   *input_ >> input_word;
   acc_.Set(input_word);
@@ -132,14 +157,20 @@ Status Emulator::ReadInput() {
 }
 
 Status Emulator::WriteOutput() {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   Word output_word = acc_.Get();
   *output_ << char(output_word);
   return Status::OK;
 }
 
 Status Emulator::Halt() {
-  assert(!IsHalted());
+  if (IsHalted()) {
+    Panic("Emulator is in halted state");
+  }
+
   is_halted_ = true;
   return Status::OK;
 }

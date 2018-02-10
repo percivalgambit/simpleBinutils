@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -100,20 +101,18 @@ TEST_CASE("An emulator can halt") {
   REQUIRE(emu.Halt().IsOk());
   REQUIRE(emu.IsHalted());
 
-  // TODO: fix this
-  /*
   SECTION("Operations will fail when the emulator is halted") {
-    REQUIRE_FALSE(emu.Load(0).IsOk());
-    REQUIRE_FALSE(emu.Store(0).IsOk());
-    REQUIRE_FALSE(emu.Clear().IsOk());
-    REQUIRE_FALSE(emu.Add(0).IsOk());
-    REQUIRE_FALSE(emu.BranchZero(0).IsOk());
-    REQUIRE_FALSE(emu.BranchNegative(0).IsOk());
-    REQUIRE_FALSE(emu.BranchUnconditional(0).IsOk());
-    REQUIRE_FALSE(emu.ReadInput().IsOk());
-    REQUIRE_FALSE(emu.WriteOutput().IsOk());
-    REQUIRE_FALSE(emu.Halt().IsOk());
-  } */
+    REQUIRE_THROWS_AS(emu.Load(0), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.Store(0), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.Clear(), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.Add(0), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.BranchZero(0), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.BranchNegative(0), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.BranchUnconditional(0), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.ReadInput(), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.WriteOutput(), std::runtime_error);
+    REQUIRE_THROWS_AS(emu.Halt(), std::runtime_error);
+  }
 }
 
 TEST_CASE("An emulator can run a program") {

@@ -7,10 +7,11 @@ ifdef WORD_SIZE
 CPPFLAGS += -DWORD_SIZE="$(WORD_SIZE)"
 endif
 
+PANIC_SRC := src/util/panic.cc
 STATUS_SRC := src/util/status.cc
-MEMORY_SRC := src/emulator/memory.cc $(STATUS_SRC)
-DECODE_INSTRUCTION_SRC := src/emulator/decode_instruction.cc $(MEMORY_SRC)
-EMULATOR_SRC := src/emulator/emulator.cc $(STATUS_SRC) $(MEMORY_SRC) $(DECODE_INSTRUCTION_SRC)
+MEMORY_SRC := src/emulator/memory.cc $(PANIC_SRC) $(STATUS_SRC)
+DECODE_INSTRUCTION_SRC := src/emulator/decode_instruction.cc $(PANIC_SRC) $(MEMORY_SRC)
+EMULATOR_SRC := src/emulator/emulator.cc $(PANIC_SRC) $(STATUS_SRC) $(MEMORY_SRC) $(DECODE_INSTRUCTION_SRC)
 SIMPLEEMU_SRC := src/emulator/main.cc $(STATUS_SRC) $(EMULATOR_SRC)
 
 GEN_HELLO_PROG_SRC := test/integration/emulator/gen_hello_prog.cc
@@ -20,7 +21,7 @@ $(eval $(call binary,simpleEMU,$(SIMPLEEMU_SRC)))
 $(eval $(call debug_binary,simpleEMU-debug,$(SIMPLEEMU_SRC)))
 
 $(eval $(call unit_test,status_test,$(STATUS_SRC),test/util/status_test.cc))
-$(eval $(call unit_test,statusor_test,$(STATUS_SRC),test/util/statusor_test.cc))
+$(eval $(call unit_test,statusor_test,$(PANIC_SRC) $(STATUS_SRC),test/util/statusor_test.cc))
 $(eval $(call unit_test,memory_test,$(MEMORY_SRC),test/emulator/memory_test.cc))
 $(eval $(call unit_test,decode_instruction_test,$(DECODE_INSTRUCTION_SRC),test/emulator/decode_instruction_test.cc))
 $(eval $(call unit_test,emulator_test,$(EMULATOR_SRC),test/emulator/emulator_test.cc))
