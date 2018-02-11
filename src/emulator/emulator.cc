@@ -73,10 +73,6 @@ Status Emulator::Run() {
 }
 
 Status Emulator::Load(const size_t operand) {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   StatusOr<Word> loaded_value = mem_.Load(operand);
   if (!loaded_value.IsOk()) {
     return loaded_value.GetStatus();
@@ -86,27 +82,15 @@ Status Emulator::Load(const size_t operand) {
 }
 
 Status Emulator::Store(const size_t operand) {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   return mem_.Store(operand, acc_.Get());
 }
 
 Status Emulator::Clear() {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   acc_.Reset();
   return Status::OK;
 }
 
 Status Emulator::Add(const size_t operand) {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   StatusOr<Word> loaded_value = mem_.Load(operand);
   if (!loaded_value.IsOk()) {
     return loaded_value.GetStatus();
@@ -116,10 +100,6 @@ Status Emulator::Add(const size_t operand) {
 }
 
 Status Emulator::BranchZero(const size_t operand) {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   if (acc_.Get() == 0) {
     return mem_.Jump(operand);
   }
@@ -127,10 +107,6 @@ Status Emulator::BranchZero(const size_t operand) {
 }
 
 Status Emulator::BranchNegative(const size_t operand) {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   if (acc_.Get() < 0) {
     return mem_.Jump(operand);
   }
@@ -138,18 +114,10 @@ Status Emulator::BranchNegative(const size_t operand) {
 }
 
 Status Emulator::BranchUnconditional(const size_t operand) {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   return mem_.Jump(operand);
 }
 
 Status Emulator::ReadInput() {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   char input_word;
   *input_ >> input_word;
   acc_.Set(input_word);
@@ -157,20 +125,12 @@ Status Emulator::ReadInput() {
 }
 
 Status Emulator::WriteOutput() {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   Word output_word = acc_.Get();
   *output_ << char(output_word);
   return Status::OK;
 }
 
 Status Emulator::Halt() {
-  if (IsHalted()) {
-    Panic("Emulator is in halted state");
-  }
-
   is_halted_ = true;
   return Status::OK;
 }

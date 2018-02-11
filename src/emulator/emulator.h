@@ -15,13 +15,12 @@ class Emulator {
  public:
   explicit Emulator(std::istream* program);
 
-  // TODO: make private for testing
   Emulator(std::istream* program, std::istream* input, std::ostream* output,
            const Accumulator acc);
 
   util::Status Run();
 
-  // TODO: make private for tests
+ private:
   util::Status Load(const size_t operand);
   util::Status Store(const size_t operand);
   util::Status Clear();
@@ -38,10 +37,8 @@ class Emulator {
   util::Status Halt();
   bool IsHalted() const;
 
-  // TODO: make private for tests
   common::Word ReadPointer() const;
 
- private:
   Accumulator acc_;
   Memory mem_;
   std::istream* input_;

@@ -7,9 +7,8 @@ namespace emulator {
 
 class Accumulator {
  public:
-  Accumulator() : value_(0) {}
+  Accumulator() : Accumulator(0) {}
 
-  // TODO: Make private for testing
   explicit Accumulator(const common::Word value) : value_(value) {}
 
   common::Word Get() const { return value_; }
