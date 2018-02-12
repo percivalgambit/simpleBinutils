@@ -1,9 +1,9 @@
-#include "catch.hpp"
+#include "util/statusor.h"
 
 #include <stdexcept>
 
+#include "test_util/catch.hpp"
 #include "util/status.h"
-#include "util/statusor.h"
 
 using util::Status;
 using util::StatusOr;

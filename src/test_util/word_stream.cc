@@ -1,4 +1,4 @@
-#include "word_stream.h"
+#include "test_util/word_stream.h"
 
 #include <istream>
 #include <string>
@@ -6,7 +6,7 @@
 
 #include "common/constants.h"
 
-namespace test {
+namespace test_util {
 
 WordStream::WordStream(const std::vector<common::Word> &vec)
     : std::istream(&buffer_), buffer_(vec) {
@@ -23,4 +23,4 @@ WordStream::WordBuffer::WordBuffer(const std::vector<common::Word> &vec) {
        reinterpret_cast<char *>(data_.data() + data_.size()));
 }
 
-}  // namespace test
+}  // namespace test_util

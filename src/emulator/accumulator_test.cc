@@ -1,6 +1,6 @@
-#include "catch.hpp"
-
 #include "emulator/accumulator.h"
+
+#include "test_util/catch.hpp"
 
 using emulator::Accumulator;
 

@@ -1,4 +1,4 @@
-#include "panic.h"
+#include "util/panic.h"
 
 #include <stdexcept>
 #include <string>

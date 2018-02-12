@@ -1,18 +1,17 @@
-#include "catch.hpp"
+#include "emulator/memory.h"
 
 #include <sstream>
 #include <string>
 
-#include "word_stream.h"
-
 #include "common/constants.h"
-#include "emulator/memory.h"
+#include "test_util/catch.hpp"
+#include "test_util/word_stream.h"
 #include "util/status.h"
 
 using common::Word;
 using common::kMemorySize;
 using emulator::Memory;
-using test::WordStream;
+using test_util::WordStream;
 using util::Status;
 
 TEST_CASE("Values can be stored in and loaded from memory objects") {

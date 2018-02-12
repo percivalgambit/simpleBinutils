@@ -1,6 +1,6 @@
-#include "catch.hpp"
-
 #include "util/status.h"
+
+#include "test_util/catch.hpp"
 
 using util::Status;
 

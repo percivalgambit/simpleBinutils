@@ -1,5 +1,5 @@
-#ifndef WORD_STREAM_H_
-#define WORD_STREAM_H_
+#ifndef TEST_UTIL_WORD_STREAM_H_
+#define TEST_UTIL_WORD_STREAM_H_
 
 #include <istream>
 #include <string>
@@ -7,7 +7,7 @@
 
 #include "common/constants.h"
 
-namespace test {
+namespace test_util {
 
 class WordStream : public std::istream {
  public:
@@ -18,7 +18,7 @@ class WordStream : public std::istream {
  private:
   class WordBuffer : public std::basic_streambuf<char> {
    public:
-    WordBuffer(const std::vector<common::Word> &vec);
+    explicit WordBuffer(const std::vector<common::Word> &vec);
 
    private:
     std::vector<common::Word> data_;
@@ -27,6 +27,6 @@ class WordStream : public std::istream {
   WordBuffer buffer_;
 };
 
-}  // namespace test
+}  // namespace test_util
 
-#endif  // WORD_STREAM_H_
+#endif  // TEST_UTIL_WORD_STREAM_H_

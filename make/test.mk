@@ -1,38 +1,53 @@
-.DELETE_ON_ERROR:
+define test =
+_test_marker := obj/test/$(2)/tested/$(1).tested
 
-define unit_test =
-unit_test: obj/unit_test/$(1)
-obj/unit_test/$(1): $(call debug_objects,$(2)) $(call test_objects,$(3)) obj/test/catch_main.o
+.PHONY: $(1) $(1).$(2)
+$(2): $(1)
+$(1): $$(_test_marker)
+$$(_test_marker): $(1).$(2)
 	@mkdir -p $$(@D)
-	$(CXX) $(LDFLAGS) $$^ -o $$@ $(LOADLIBES) $(LDLIBS)
-	$(DEBUG_CMD) ./$$@
-endef
-
-define integration_test =
-_test_name := obj/integration_test/$(1).tested
-
-integration_test: $$(_test_name)
-$$(_test_name):
-	@mkdir -p $$(@D)
-	$(MAKE) $(1).test
 	@touch $$@
 endef
 
-.SECONDEXPANSION:
+define unit_test =
+_test_name := obj/test/unit_test/bin/$(1)
 
-%.test: SUT             =
-%.test: INPUT_PROG      = obj/integration_test/prog/$(@:%.test=%).bin
-%.test: SHOULD_FAIL     =
-%.test: EXPECTED_STDOUT = test/integration/reference/$(@:.test=.stdout.reference)
-%.test: EXPECTED_STDERR = test/integration/reference/$(@:.test=.stderr.reference)
-%.test: ACTUAL_STDOUT   = obj/integration_test/out/$(@:.test=.stdout)
-%.test: ACTUAL_STDERR   = obj/integration_test/out/$(@:.test=.stderr)
-%.test: $$(SUT) $$(INPUT_PROG)
-	@mkdir -p $(dir $(ACTUAL_STDOUT))
-	@mkdir -p $(dir $(ACTUAL_STDERR))
-	$(if $(SHOULD_FAIL),-) $(DEBUG_CMD) ./$< $(INPUT_PROG) > $(ACTUAL_STDOUT) 2> $(ACTUAL_STDERR)
-	diff $(ACTUAL_STDOUT) $(EXPECTED_STDOUT)
-	diff $(ACTUAL_STDERR) $(EXPECTED_STDERR)
+$$(eval $$(call test,$(1),unit_test))
+
+$(1).unit_test: $$(_test_name)
+$$(_test_name): obj/debug/test_util/catch_main.o $(call debug_objects,$(2))
+	@mkdir -p $$(@D)
+	$(CXX) $(LDFLAGS) $$^ -o $$@ $(LOADLIBES) $(LDLIBS)
+ifdef DEBUG_CMD
+	$(DEBUG_CMD) ./$$@
+	@false
+else
+	./$$@
+endif
+endef
+
+define integration_test =
+$$(eval $$(call test,$(1),integration_test))
+
+$(1).integration_test: SUT             ?=
+$(1).integration_test: INPUT_PROG      ?= obj/integration_test/input/$$(@:%.integration_test=%).bin
+$(1).integration_test: SHOULD_FAIL     ?=
+$(1).integration_test: EXPECTED_STDOUT ?= $(INTEGRATION_REFERENCE_DIR)/$$(@:.integration_test=.stdout.reference)
+$(1).integration_test: EXPECTED_STDERR ?= $(INTEGRATION_REFERENCE_DIR)/$$(@:.integration_test=.stderr.reference)
+$(1).integration_test: ACTUAL_STDOUT   ?= obj/integration_test/output/$$(@:.integration_test=.stdout)
+$(1).integration_test: ACTUAL_STDERR   ?= obj/integration_test/output/$$(@:.integration_test=.stderr)
+$(1).integration_test: REFERENCE_FILES ?=
+$(1).integration_test: $$$$(SUT) $$$$(INPUT_PROG)
+	@mkdir -p $$(dir $$(ACTUAL_STDOUT))
+	@mkdir -p $$(dir $$(ACTUAL_STDERR))
+	@mkdir -p $(INTEGRATION_REFERENCE_DIR)
+	-cp $$(REFERENCE_FILES) $(INTEGRATION_REFERENCE_DIR)
+	$$(if $$(SHOULD_FAIL),-) $(DEBUG_CMD) ./$$< $$(INPUT_PROG) > $$(ACTUAL_STDOUT) 2> $$(ACTUAL_STDERR)
+	diff $$(ACTUAL_STDOUT) $$(EXPECTED_STDOUT)
+	diff $$(ACTUAL_STDERR) $$(EXPECTED_STDERR)
+endef
+
+INTEGRATION_REFERENCE_DIR := obj/integration_test/reference
 
 .PHONY: test unit_test integration_test
 

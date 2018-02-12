@@ -1,14 +1,13 @@
 #include <iostream>
 #include <vector>
 
-#include "word_stream.h"
-
 #include "common/constants.h"
 #include "common/instruction.h"
+#include "test_util/word_stream.h"
 
 using common::Instruction;
 using common::Word;
-using test::WordStream;
+using test_util::WordStream;
 
 int main() {
   std::vector<Word> helloProg{static_cast<Word>(Instruction::Code::LOD),

@@ -1,20 +1,19 @@
-#include "catch.hpp"
+#include "emulator/decode_instruction.h"
 
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "word_stream.h"
-
 #include "common/constants.h"
 #include "common/instruction.h"
-#include "emulator/decode_instruction.h"
+#include "test_util/catch.hpp"
+#include "test_util/word_stream.h"
 
 using common::Instruction;
 using common::Word;
 using emulator::DecodeInstruction;
 using emulator::Memory;
-using test::WordStream;
+using test_util::WordStream;
 
 TEST_CASE("Instructions can be decoded") {
   WordStream program(std::vector<Word>(

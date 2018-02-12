@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include "emulator/emulator.h"
 
 #include <iostream>
 #include <sstream>
@@ -6,18 +6,17 @@
 #include <string>
 #include <vector>
 
-#include "word_stream.h"
-
 #include "common/constants.h"
 #include "common/instruction.h"
 #include "emulator/accumulator.h"
-#include "emulator/emulator.h"
+#include "test_util/catch.hpp"
+#include "test_util/word_stream.h"
 
 using common::Instruction;
 using common::Word;
 using emulator::Accumulator;
 using emulator::Emulator;
-using test::WordStream;
+using test_util::WordStream;
 
 TEST_CASE("An emulator can read and write characters") {
   std::stringstream input;
