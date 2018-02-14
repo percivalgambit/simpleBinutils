@@ -28,7 +28,7 @@ $(eval $(call unit_test,decode_instruction_test,$(DECODE_INSTRUCTION_SRC) $(WORD
 $(eval $(call unit_test,emulator_test,$(EMULATOR_SRC) $(WORD_STREAM_SRC) src/emulator/emulator_test.cc))
 
 $(eval $(call debug_binary,$(GEN_HELLO_PROG_BIN),$(WORD_STREAM_SRC) $(GEN_HELLO_PROG_SRC)))
-$(eval $(call generate_file,obj/integration_test/input/emulator_hello_prog.bin,$(GEN_HELLO_PROG_BIN)))
+$(eval $(call generate_file,obj/test/integration_test/input/emulator_hello_prog.bin,$(GEN_HELLO_PROG_BIN)))
 
 emulator_hello_prog.integration_test: SUT := simpleEMU-debug
 emulator_hello_prog.integration_test: REFERENCE_FILES := src/emulator/integration/reference/emulator_hello_prog.stdout.reference src/emulator/integration/reference/emulator_hello_prog.stderr.reference

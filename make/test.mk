@@ -30,12 +30,12 @@ define integration_test =
 $$(eval $$(call test,$(1),integration_test))
 
 $(1).integration_test: SUT             ?=
-$(1).integration_test: INPUT_PROG      ?= obj/integration_test/input/$$(@:%.integration_test=%).bin
+$(1).integration_test: INPUT_PROG      ?= obj/test/integration_test/input/$$(@:%.integration_test=%).bin
 $(1).integration_test: SHOULD_FAIL     ?=
 $(1).integration_test: EXPECTED_STDOUT ?= $(INTEGRATION_REFERENCE_DIR)/$$(@:.integration_test=.stdout.reference)
 $(1).integration_test: EXPECTED_STDERR ?= $(INTEGRATION_REFERENCE_DIR)/$$(@:.integration_test=.stderr.reference)
-$(1).integration_test: ACTUAL_STDOUT   ?= obj/integration_test/output/$$(@:.integration_test=.stdout)
-$(1).integration_test: ACTUAL_STDERR   ?= obj/integration_test/output/$$(@:.integration_test=.stderr)
+$(1).integration_test: ACTUAL_STDOUT   ?= obj/test/integration_test/output/$$(@:.integration_test=.stdout)
+$(1).integration_test: ACTUAL_STDERR   ?= obj/test/integration_test/output/$$(@:.integration_test=.stderr)
 $(1).integration_test: REFERENCE_FILES ?=
 $(1).integration_test: $$$$(SUT) $$$$(INPUT_PROG)
 	@mkdir -p $$(dir $$(ACTUAL_STDOUT))
@@ -47,7 +47,7 @@ $(1).integration_test: $$$$(SUT) $$$$(INPUT_PROG)
 	diff $$(ACTUAL_STDERR) $$(EXPECTED_STDERR)
 endef
 
-INTEGRATION_REFERENCE_DIR := obj/integration_test/reference
+INTEGRATION_REFERENCE_DIR := obj/test/integration_test/reference
 
 .PHONY: test unit_test integration_test
 
