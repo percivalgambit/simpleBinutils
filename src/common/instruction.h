@@ -2,6 +2,8 @@
 #define COMMON_INSTRUCTION_H_
 
 #include <experimental/optional>
+#include <ostream>
+#include <string>
 
 #include "common/constants.h"
 
@@ -21,6 +23,9 @@ struct Instruction {
     HLT = 0
   };
 
+  static constexpr const char* CodeStrings[]{"LOD", "STO", "ADD", "BZE", "BNE",
+                                             "BRA", "INP", "OUT", "CLA", "HLT"};
+
   explicit Instruction(const Code code) : code(code) {}
 
   Instruction(const Code code, const Word operand)
@@ -28,6 +33,14 @@ struct Instruction {
 
   bool operator==(const Instruction& other) const {
     return (this->code == other.code) && (this->operand == other.operand);
+  }
+
+  std::string ToString() const {
+    std::string str = CodeStrings[static_cast<int>(code)];
+    if (operand) {
+      str += ": " + std::to_string(operand.value());
+    }
+    return str;
   }
 
   Code code;

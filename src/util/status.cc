@@ -10,12 +10,6 @@ using std::string;
 
 namespace util {
 
-const char* Status::CodeStrings[] = {
-    "OK",
-    "OUT_OF_BOUNDS",
-    "INVALID",
-};
-
 const Status& Status::OK = Status();
 
 Status::Status() : Status(Code::kOK, "") {}
@@ -43,6 +37,11 @@ string Status::ToString() const {
   }
 
   return std::string(CodeStrings[static_cast<int>(code_)]) + ": " + message_;
+}
+
+ostream& operator<<(ostream& os, const Status::Code code) {
+  os << Status::CodeStrings[static_cast<int>(code)];
+  return os;
 }
 
 ostream& operator<<(ostream& os, const Status& status) {

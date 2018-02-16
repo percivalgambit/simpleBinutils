@@ -16,7 +16,11 @@ class[[nodiscard]] Status {
     kInvalid,
   };
 
-  static const char* CodeStrings[];
+  static constexpr const char* CodeStrings[]{
+      "OK",
+      "OUT_OF_BOUNDS",
+      "INVALID",
+  };
 
   static const Status& OK;
 
@@ -38,6 +42,7 @@ class[[nodiscard]] Status {
   std::string message_;
 };
 
+std::ostream& operator<<(std::ostream& os, const Status::Code code);
 std::ostream& operator<<(std::ostream& os, const Status& status);
 
 }  // namespace util

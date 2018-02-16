@@ -83,6 +83,10 @@ TEST_CASE("An emulator has a pointer that can jump") {
       {Instruction::Code::BRA, 1, true}};
 
   for (const TestCase &test : tests) {
+    INFO("Test case: {instruction: "
+         << Instruction::CodeStrings[static_cast<int>(test.branch_instruction)]
+         << ", accumulator: " << test.accumulator_value
+         << ", expected: " << test.expected_branch_success << "}");
     std::stringstream input;
     std::stringstream output;
     WordStream program(
