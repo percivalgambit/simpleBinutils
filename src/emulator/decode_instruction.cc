@@ -3,11 +3,13 @@
 #include <string>
 
 #include "common/instruction.h"
+#include "common/opcode.h"
 #include "emulator/memory.h"
 #include "util/status.h"
 #include "util/statusor.h"
 
 using common::Instruction;
+using common::Opcode;
 using common::Word;
 using util::Status;
 using util::StatusOr;
@@ -15,22 +17,22 @@ using util::StatusOr;
 namespace emulator {
 
 StatusOr<Instruction> DecodeInstruction(Memory *memory) {
-  const Instruction::Code code = Instruction::Code(memory->ReadPointer());
+  const Opcode code = Opcode(memory->ReadPointer());
   memory->AdvancePointer();
   const Word operand = memory->ReadPointer();
   switch (code) {
-    case Instruction::Code::LOD:
-    case Instruction::Code::STO:
-    case Instruction::Code::ADD:
-    case Instruction::Code::BZE:
-    case Instruction::Code::BNE:
-    case Instruction::Code::BRA:
+    case Opcode::LOD:
+    case Opcode::STO:
+    case Opcode::ADD:
+    case Opcode::BZE:
+    case Opcode::BNE:
+    case Opcode::BRA:
       memory->AdvancePointer();
       return Instruction(code, operand);
-    case Instruction::Code::INP:
-    case Instruction::Code::OUT:
-    case Instruction::Code::CLA:
-    case Instruction::Code::HLT:
+    case Opcode::INP:
+    case Opcode::OUT:
+    case Opcode::CLA:
+    case Opcode::HLT:
       return Instruction(code);
     default:
       return Status(Status::Code::kInvalid,

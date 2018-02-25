@@ -14,12 +14,12 @@ class[[nodiscard]] Status {
     kOK = 0,
     kOutOfBounds,
     kInvalid,
+    kNoParse,
+    kNotFound,
   };
 
   static constexpr const char* CodeStrings[]{
-      "OK",
-      "OUT_OF_BOUNDS",
-      "INVALID",
+      "OK", "OUT_OF_BOUNDS", "INVALID", "NO_PARSE", "NOT_FOUND",
   };
 
   static const Status& OK;

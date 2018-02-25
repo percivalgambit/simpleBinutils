@@ -4,6 +4,7 @@
 
 #include "common/constants.h"
 #include "common/instruction.h"
+#include "common/opcode.h"
 #include "emulator/accumulator.h"
 #include "emulator/decode_instruction.h"
 #include "util/panic.h"
@@ -11,6 +12,7 @@
 #include "util/statusor.h"
 
 using common::Instruction;
+using common::Opcode;
 using common::Word;
 using emulator::Accumulator;
 using util::Panic;
@@ -31,7 +33,7 @@ Emulator::Emulator(std::istream* program, std::istream* input,
       is_halted_(false) {}
 
 #define EXECUTE_ONE_OPERAND(code_name, func) \
-  case Instruction::Code::code_name:         \
+  case Opcode::code_name:                    \
     status = func(*instruction.operand);     \
     if (!status.IsOk()) {                    \
       return status;                         \
@@ -39,7 +41,7 @@ Emulator::Emulator(std::istream* program, std::istream* input,
     break;
 
 #define EXECUTE_ZERO_OPERANDS(code_name, func) \
-  case Instruction::Code::code_name:           \
+  case Opcode::code_name:                      \
     status = func();                           \
     if (!status.IsOk()) {                      \
       return status;                           \

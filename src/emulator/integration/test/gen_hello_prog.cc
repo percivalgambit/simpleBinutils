@@ -2,30 +2,30 @@
 #include <vector>
 
 #include "common/constants.h"
-#include "common/instruction.h"
+#include "common/opcode.h"
 #include "test_util/word_stream.h"
 
-using common::Instruction;
+using common::Opcode;
 using common::Word;
 using test_util::WordStream;
 
 int main() {
-  std::vector<Word> helloProg{static_cast<Word>(Instruction::Code::LOD),
+  std::vector<Word> helloProg{static_cast<Word>(Opcode::LOD),
                               16,
-                              static_cast<Word>(Instruction::Code::OUT),
-                              static_cast<Word>(Instruction::Code::LOD),
+                              static_cast<Word>(Opcode::OUT),
+                              static_cast<Word>(Opcode::LOD),
                               17,
-                              static_cast<Word>(Instruction::Code::OUT),
-                              static_cast<Word>(Instruction::Code::LOD),
+                              static_cast<Word>(Opcode::OUT),
+                              static_cast<Word>(Opcode::LOD),
                               18,
-                              static_cast<Word>(Instruction::Code::OUT),
-                              static_cast<Word>(Instruction::Code::LOD),
+                              static_cast<Word>(Opcode::OUT),
+                              static_cast<Word>(Opcode::LOD),
                               19,
-                              static_cast<Word>(Instruction::Code::OUT),
-                              static_cast<Word>(Instruction::Code::LOD),
+                              static_cast<Word>(Opcode::OUT),
+                              static_cast<Word>(Opcode::LOD),
                               20,
-                              static_cast<Word>(Instruction::Code::OUT),
-                              static_cast<Word>(Instruction::Code::HLT),
+                              static_cast<Word>(Opcode::OUT),
+                              static_cast<Word>(Opcode::HLT),
                               'h',
                               'e',
                               'l',

@@ -1,9 +1,8 @@
 define test =
 _test_marker := obj/test/$(2)/tested/$(1).tested
 
-.PHONY: $(1) $(1).$(2)
-$(2): $(1)
-$(1): $$(_test_marker)
+.PHONY: $(1).$(2)
+$(2): $$(_test_marker)
 $$(_test_marker): $(1).$(2)
 	@mkdir -p $$(@D)
 	@touch $$@
